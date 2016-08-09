@@ -24,6 +24,7 @@ import com.itextpdf.signatures.SignaturePermissions;
 import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.VerificationOK;
+import com.itextpdf.test.ITextTest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -55,6 +56,18 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.After;
 import org.junit.Before;
 
+/**
+ * Due to import control restrictions by the governments of a few countries,
+ * the encryption libraries shipped by default with the Java SDK restrict the
+ * length, and as a result the strength, of encryption keys. Be aware that in
+ * this sample by using {@link ITextTest#removeCryptographyRestrictions()} we
+ * remove cryptography restrictions via reflection for testing purposes.
+ * <br/>
+ * For more conventional way of solving this problem you need to replace the
+ * default security JARs in your Java installation with the Java Cryptography
+ * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
+ * are available for download from http://java.oracle.com/ in eligible countries.
+ */
 public class SignatureTest {
 
     public static final String ADOBE = "./src/test/resources/encryption/adobeRootCA.cer";
@@ -71,28 +84,12 @@ public class SignatureTest {
 
     @Before
     public void before() {
-        try {
-            Field field = Class.forName("javax.crypto.JceSecurity").
-                    getDeclaredField("isRestricted");
-            field.setAccessible(true);
-            field.set(null, java.lang.Boolean.FALSE);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        ITextTest.removeCryptographyRestrictions();
     }
 
     @After
     public void after() {
-        try {
-            Field field = Class.forName("javax.crypto.JceSecurity").
-                    getDeclaredField("isRestricted");
-            if (field.isAccessible()) {
-                field.set(null, java.lang.Boolean.TRUE);
-                field.setAccessible(false);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        ITextTest.restoreCryptographyRestrictions();
     }
 
 
