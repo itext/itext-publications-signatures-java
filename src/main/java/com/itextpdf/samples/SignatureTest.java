@@ -25,12 +25,12 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.VerificationOK;
 import com.itextpdf.test.ITextTest;
+import com.itextpdf.test.LogListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -55,6 +55,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 
 /**
  * Due to import control restrictions by the governments of a few countries,
@@ -92,7 +93,8 @@ public class SignatureTest {
         ITextTest.restoreCryptographyRestrictions();
     }
 
-
+    @Rule
+    public LogListener logListener = new LogListener();
 
     protected void setupSystemOutput() {
         output = new ByteArrayOutputStream();
@@ -104,7 +106,7 @@ public class SignatureTest {
     protected String getSystemOutput() {
         System.out.flush();
         System.setOut(oldSysOut);
-        return output.toString();
+        return output.toString().replace("\r\n", "\n");
     }
 
     protected String checkForErrors(String outFile, String cmpFile, String destPath, Map<Integer, List<Rectangle>> ignoredAreas)

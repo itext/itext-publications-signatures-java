@@ -14,29 +14,41 @@
  */
 package com.itextpdf.samples.signatures.chapter05;
 
-import com.itextpdf.signatures.*;
+import com.itextpdf.signatures.CRLVerifier;
+import com.itextpdf.signatures.CertificateVerification;
+import com.itextpdf.signatures.OCSPVerifier;
+import com.itextpdf.signatures.PdfPKCS7;
+import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.VerificationException;
+import com.itextpdf.signatures.VerificationOK;
 import com.itextpdf.test.annotations.type.SampleTest;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import javax.smartcardio.CardException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
-import java.security.cert.*;
+import java.security.cert.CRL;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateNotYetValidException;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import javax.smartcardio.CardException;
+
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 @Category(SampleTest.class)
 public class C5_03_CertificateValidation extends C5_01_SignatureIntegrity {
@@ -62,12 +74,12 @@ public class C5_03_CertificateValidation extends C5_01_SignatureIntegrity {
             "The certificate was valid at the time of signing.\n" +
             "The certificate is still valid.\n" +
             "=== Checking validity of the document at the time of signing ===\n" +
-            " [main] INFO  com.itextpdf.signatures.OCSPVerifier - Valid OCSPs found: 0\n" +
-            " [main] INFO  com.itextpdf.signatures.CRLVerifier - Valid CRLs found: 0\n" +
+            "com.itextpdf.signatures.OCSPVerifier INFO Valid OCSPs found: 0\n" +
+            "com.itextpdf.signatures.CRLVerifier INFO Valid CRLs found: 0\n" +
             "The signing certificate couldn't be verified\n" +
             "=== Checking validity of the document today ===\n" +
-            " [main] INFO  com.itextpdf.signatures.OCSPVerifier - Valid OCSPs found: 0\n" +
-            " [main] INFO  com.itextpdf.signatures.CRLVerifier - Valid CRLs found: 0\n" +
+            "com.itextpdf.signatures.OCSPVerifier INFO Valid OCSPs found: 0\n" +
+            "com.itextpdf.signatures.CRLVerifier INFO Valid CRLs found: 0\n" +
             "The signing certificate couldn't be verified\n" +
             "\n";
 
