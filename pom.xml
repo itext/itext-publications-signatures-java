@@ -172,9 +172,7 @@
                 <version>2.19.1</version>
                 <configuration>
                     <groups>${unittests}</groups>
-                    <parallel>all</parallel>
-                    <threadCount>10</threadCount>
-                    <useUnlimitedThreads>true</useUnlimitedThreads>
+                    <argLine>${env.SUREFIRE_OPTS}</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -186,7 +184,7 @@
                         <include>**/*.java</include>
                     </includes>
                     <groups>${sampletests}</groups>
-                    <parallel>none</parallel>
+                  	<argLine>${env.SUREFIRE_OPTS}</argLine>
                 </configuration>
                 <executions>
                     <execution>
