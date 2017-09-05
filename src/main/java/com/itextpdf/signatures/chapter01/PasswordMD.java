@@ -16,9 +16,8 @@ import java.util.Arrays;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class PasswordMD.
+ * Class to demonstrate the use of message digests for passwords.
  */
 public class PasswordMD {
     
@@ -43,32 +42,6 @@ public class PasswordMD {
         else
             md = MessageDigest.getInstance(algorithm, provider);
         digest = md.digest(password.getBytes());
-    }
-    
-    /**
-     * Gets an instance of the PasswordMD class.
-     *
-     * @param password the password
-     * @param algorithm the algorithm
-     * @return an instance of the PasswordMD class
-     * @throws GeneralSecurityException a general security exception
-     */
-    public static PasswordMD getInstance(String password, String algorithm)
-        throws GeneralSecurityException {
-        return new PasswordMD(password, algorithm, null);
-    }
-    
-    /**
-     * Gets an instance of the PasswordMD class.
-     *
-     * @param password the password
-     * @param algorithm the algorithm
-     * @return an instance of the PasswordMD class
-     * @throws GeneralSecurityException a general security exception
-     */
-    public static PasswordMD getInstance(String password, String algorithm, String provider)
-        throws GeneralSecurityException {
-        return new PasswordMD(password, algorithm, provider);
     }
     
     /**
@@ -107,7 +80,7 @@ public class PasswordMD {
      */
     public static void showTestDefault(String algorithm) {
         try {
-            PasswordMD app = getInstance("password", algorithm);
+            PasswordMD app = new PasswordMD("password", algorithm, null);
             System.out.println("Digest using " + algorithm + ": "
                     + app.getDigestSize());
             System.out.println("Digest: " + app.getDigestAsHexString());
@@ -131,7 +104,7 @@ public class PasswordMD {
      */
     public static void showTestBC(String algorithm) {
         try {
-            PasswordMD app = getInstance("password", algorithm, "BC");
+            PasswordMD app = new PasswordMD("password", algorithm, "BC");
             System.out.println("Digest using " + algorithm + ": "
                     + app.getDigestSize());
             System.out.println("Digest: " + app.getDigestAsHexString());
