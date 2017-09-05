@@ -12,7 +12,6 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.util.Arrays;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -69,7 +68,7 @@ public class PasswordMD {
      * @return true, if successful
      */
     public boolean checkPassword(String password) {
-        return Arrays.equals(digest, md.digest(password.getBytes()));
+        return MessageDigest.isEqual(digest, md.digest(password.getBytes()));
     }
     
     /**
@@ -125,6 +124,7 @@ public class PasswordMD {
      * @param args the arguments
      */
     public static void main(String[] args) {
+    	showTestDefault("MD2");
     	showTestDefault("MD5");
     	showTestDefault("SHA-1");
     	showTestDefault("SHA-224");
