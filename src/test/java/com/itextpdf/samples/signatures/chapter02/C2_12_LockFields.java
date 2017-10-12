@@ -44,16 +44,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.fail;
 
-@Ignore
 @Category(SampleTest.class)
 public class C2_12_LockFields extends SignatureTest {
     public static final String FORM = "./target/test/resources/signatures/chapter02/form_lock.pdf";
@@ -110,7 +112,6 @@ public class C2_12_LockFields extends SignatureTest {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
         signer.setFieldName(name);
-        // TODO DEVSIX-488
         signer.setCertificationLevel(PdfSigner.CERTIFIED_FORM_FILLING);
         PdfAcroForm form = PdfAcroForm.getAcroForm(signer.getDocument(), true);
         form.getField(name).setReadOnly(true);
@@ -229,8 +230,16 @@ public class C2_12_LockFields extends SignatureTest {
         C2_12_LockFields.main(null);
 
         String[] resultFiles = new String[]{"step_1_signed_by_alice.pdf", "step_2_signed_by_alice_and_bob.pdf", "step_3_signed_by_alice_bob_and_carol.pdf",
-                        "step_4_signed_by_alice_bob_carol_and_dave.pdf", "step_5_signed_by_alice_and_bob_broken_by_chuck.pdf",
-                        "step_6_signed_by_dave_broken_by_chuck.pdf"};
+
+                // TODO: DEVSIX-1623 for some reason Acrobat recognizes last signature in this document as invalid,
+                // it happens only if LockPermissions is set to NO_CHANGES_ALLOWED for the last signature form field.
+                // It's still unclear, whether it's iText messes up the document or it's Acrobat bug.
+                "step_4_signed_by_alice_bob_carol_and_dave.pdf",
+
+                // TODO: iText doesn't recognize invalidated signatures in those files,
+                // because we don't check changes in new revisions against old signatures (permissions, certifications, content changes),
+                // however signatures themselves are not broken.
+                "step_5_signed_by_alice_and_bob_broken_by_chuck.pdf", "step_6_signed_by_dave_broken_by_chuck.pdf"};
 
         String destPath = String.format(outPath, "chapter02");
         String comparePath = String.format(cmpPath, "chapter02");
@@ -240,7 +249,7 @@ public class C2_12_LockFields extends SignatureTest {
 
         HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() {
             {
-                put(1, Arrays.asList(new Rectangle(38f, 743f, 215f, 759f), new Rectangle(38f, 676f, 215f, 692f), new Rectangle(38f, 611f, 215f, 627f)));
+                put(1, Arrays.asList(new Rectangle(55, 425, 287, 380)));
             }
         };
 
@@ -256,5 +265,14 @@ public class C2_12_LockFields extends SignatureTest {
         if (error) {
             fail(accumulateErrors(errors));
         }
+    }
+
+    @Override
+    protected void initKeyStoreForVerification(KeyStore ks) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+        super.initKeyStoreForVerification(ks);
+        ks.setCertificateEntry("alice", loadCertificateFromKeyStore(ALICE, PASSWORD));
+        ks.setCertificateEntry("bob", loadCertificateFromKeyStore(BOB, PASSWORD));
+        ks.setCertificateEntry("carol", loadCertificateFromKeyStore(CAROL, PASSWORD));
+        ks.setCertificateEntry("dave", loadCertificateFromKeyStore(DAVE, PASSWORD));
     }
 }

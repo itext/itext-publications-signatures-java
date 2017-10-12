@@ -148,6 +148,18 @@ public class SignatureTest {
         ks.setCertificateEntry("bruno", brunoCert);
     }
 
+    protected static Certificate loadCertificateFromKeyStore(String keystorePath, char[] ksPass) {
+        try {
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(new FileInputStream(keystorePath), ksPass);
+            String alias = ks.aliases().nextElement();
+            return ks.getCertificate(alias);
+        } catch (Exception e) {
+            // ignored
+        }
+        return null;
+    }
+
     private void verifySignaturesForDocument(String documentPath)
             throws IOException, GeneralSecurityException {
         BouncyCastleProvider provider = new BouncyCastleProvider();
