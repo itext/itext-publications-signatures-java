@@ -35,7 +35,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
-@Ignore("Put property file with valid data")
+@Ignore("DEVSIX-561: Put property file with valid data")
 @Category(SampleTest.class)
 public class C3_02_GetCrlUrl extends SignatureTest {
     public static final  String expectedOutput = "";

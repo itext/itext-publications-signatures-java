@@ -15,7 +15,7 @@
  */
 package com.itextpdf.samples.signatures.chapter02;
 
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -78,7 +78,7 @@ public class C2_05_CustomAppearance extends SignatureTest {
         float width = n0.getBBox().toRectangle().getWidth();
         float height = n0.getBBox().toRectangle().getHeight();
         PdfCanvas canvas = new PdfCanvas(n0, signer.getDocument());
-        canvas.setFillColor(Color.LIGHT_GRAY);
+        canvas.setFillColor(ColorConstants.LIGHT_GRAY);
         canvas.rectangle(x, y, width, height);
         canvas.fill();
         // Creating the appearance for layer 2

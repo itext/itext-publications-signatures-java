@@ -18,9 +18,15 @@ package com.itextpdf.samples.signatures.chapter02;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
-import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -76,15 +82,15 @@ public class C2_04_CreateEmptyField extends SignatureTest {
             mkDictionary = new PdfDictionary();
         }
         PdfArray black = new PdfArray();
-        black.add(new PdfNumber(Color.BLACK.getColorValue()[0]));
-        black.add(new PdfNumber(Color.BLACK.getColorValue()[1]));
-        black.add(new PdfNumber(Color.BLACK.getColorValue()[2]));
+        black.add(new PdfNumber(ColorConstants.BLACK.getColorValue()[0]));
+        black.add(new PdfNumber(ColorConstants.BLACK.getColorValue()[1]));
+        black.add(new PdfNumber(ColorConstants.BLACK.getColorValue()[2]));
         mkDictionary.put(PdfName.BC, black);
 
         PdfArray white = new PdfArray();
-        black.add(new PdfNumber(Color.WHITE.getColorValue()[0]));
-        black.add(new PdfNumber(Color.WHITE.getColorValue()[1]));
-        black.add(new PdfNumber(Color.WHITE.getColorValue()[2]));
+        black.add(new PdfNumber(ColorConstants.WHITE.getColorValue()[0]));
+        black.add(new PdfNumber(ColorConstants.WHITE.getColorValue()[1]));
+        black.add(new PdfNumber(ColorConstants.WHITE.getColorValue()[2]));
         mkDictionary.put(PdfName.BG, white);
 
         field.getWidgets().get(0).setAppearanceCharacteristics(mkDictionary);
@@ -96,11 +102,11 @@ public class C2_04_CreateEmptyField extends SignatureTest {
         PdfFormXObject xObject = new PdfFormXObject(rect);
         PdfCanvas canvas = new PdfCanvas(xObject, pdfDoc);
         canvas
-                .setStrokeColor(Color.BLUE)
-                .setFillColor(Color.LIGHT_GRAY)
+                .setStrokeColor(ColorConstants.BLUE)
+                .setFillColor(ColorConstants.LIGHT_GRAY)
                 .rectangle(0.5f, 0.5f, 199.5f, 99.5f)
                 .fillStroke()
-                .setFillColor(Color.BLUE);
+                .setFillColor(ColorConstants.BLUE);
         new Canvas(canvas, pdfDoc, rect).showTextAligned("SIGN HERE", 100, 50,
                 TextAlignment.CENTER, (float) Math.toRadians(25));
         // TODO Acrobat does not render new appearance (Foxit however does)
