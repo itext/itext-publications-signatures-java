@@ -55,7 +55,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import static org.junit.Assert.fail;
 
-@Ignore
 @Category(SampleTest.class)
 public class C2_09_SignatureTypes extends SignatureTest {
     public static final String KEYSTORE = "./src/test/resources/encryption/ks";
@@ -128,7 +127,7 @@ public class C2_09_SignatureTypes extends SignatureTest {
             throws GeneralSecurityException, IOException {
         // Creating the reader and the signer
         PdfReader reader = new PdfReader(src);
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), false);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
         // Creating the appearance
         PdfSignatureAppearance appearance = signer.getSignatureAppearance();
         appearance.setReason(reason);
@@ -155,7 +154,6 @@ public class C2_09_SignatureTypes extends SignatureTest {
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
         Certificate[] chain = ks.getCertificateChain(alias);
         C2_09_SignatureTypes app = new C2_09_SignatureTypes();
-        // TODO DEVSIX-488
         app.sign(SRC, String.format(DEST, 1), chain, pk, DigestAlgorithms.SHA256, provider.getName(), PdfSigner.CryptoStandard.CMS, PdfSigner.NOT_CERTIFIED, "Test 1", "Ghent");
         app.sign(SRC, String.format(DEST, 2), chain, pk, DigestAlgorithms.SHA256, provider.getName(), PdfSigner.CryptoStandard.CMS, PdfSigner.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS, "Test 1", "Ghent");
         app.sign(SRC, String.format(DEST, 3), chain, pk, DigestAlgorithms.SHA256, provider.getName(), PdfSigner.CryptoStandard.CMS, PdfSigner.CERTIFIED_FORM_FILLING, "Test 1", "Ghent");
@@ -165,7 +163,7 @@ public class C2_09_SignatureTypes extends SignatureTest {
         app.addAnnotation(String.format(DEST, 3), String.format(DEST, "3_annotated"));
         app.addAnnotation(String.format(DEST, 4), String.format(DEST, "4_annotated"));
         app.addWrongAnnotation(String.format(DEST, 1), String.format(DEST, "1_annotated_wrong"));
-        app.addWrongAnnotation(SRC, String.format(DEST, "1_annotated_wrong"));
+//        app.addWrongAnnotation(SRC, String.format(DEST, "1_annotated_wrong"));
         app.addText(String.format(DEST, 1), String.format(DEST, "1_text"));
         app.signAgain(String.format(DEST, 1), String.format(DEST, "1_double"), chain, pk, DigestAlgorithms.SHA256, provider.getName(), PdfSigner.CryptoStandard.CMS, "Second signature test", "Gent");
         app.signAgain(String.format(DEST, 2), String.format(DEST, "2_double"), chain, pk, DigestAlgorithms.SHA256, provider.getName(), PdfSigner.CryptoStandard.CMS, "Second signature test", "Gent");
@@ -180,21 +178,26 @@ public class C2_09_SignatureTypes extends SignatureTest {
 
         String[] resultFiles =
                 new String[]{"hello_level_1.pdf", "hello_level_2.pdf", "hello_level_3.pdf", "hello_level_4.pdf",
-                        "hello_level_2_annotated.pdf", "hello_level_3_annotated.pdf", "hello_level_4_annotated.pdf",
-                        "hello_level_1_text.pdf", // this document's signature is not broken, that's why verifier doesn't show any errors;
-                        // this document is invalid from certificate point of view, which is not checked by itext
-                        "hello_level_1_double.pdf", "hello_level_2_double.pdf", "hello_level_3_double.pdf", "hello_level_4_double.pdf"};
+                        "hello_level_1_annotated.pdf", "hello_level_2_annotated.pdf",
+                        "hello_level_1_annotated_wrong.pdf",
+                        "hello_level_1_double.pdf", "hello_level_2_double.pdf", "hello_level_3_double.pdf",
+
+                        // TODO: iText doesn't recognize invalidated signatures in those files,
+                        // because we don't check changes in new revisions against old signatures (permissions, certifications, content changes),
+                        // however signatures themselves are not broken.
+                        "hello_level_3_annotated.pdf", "hello_level_4_annotated.pdf", "hello_level_1_text.pdf", "hello_level_4_double.pdf",
+                };
 
         String destPath = String.format(outPath, "chapter02");
         String comparePath = String.format(cmpPath, "chapter02");
 
         String[] errors = new String[resultFiles.length];
         boolean error = false;
-        int indexOfInvalidFile = 4;
+        int indexOfInvalidFile = 6;
 
         HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() {
             {
-                put(1, Arrays.asList(new Rectangle(38f, 758f, 110f, 763f), new Rectangle(38f, 710f, 110f, 715f)));
+                put(1, Arrays.asList(new Rectangle(72f, 675f, 170f, 20f), new Rectangle(72f, 725f, 170f, 20f)));
             }
         };
 

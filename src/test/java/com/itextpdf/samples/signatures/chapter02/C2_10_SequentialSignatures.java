@@ -17,6 +17,7 @@ package com.itextpdf.samples.signatures.chapter02;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -31,7 +32,6 @@ import com.itextpdf.samples.SignatureTest;
 import com.itextpdf.signatures.*;
 import com.itextpdf.test.annotations.type.SampleTest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -41,11 +41,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
-@Ignore
+import static org.junit.Assert.fail;
+
 @Category(SampleTest.class)
 public class C2_10_SequentialSignatures extends SignatureTest {
     public static final String FORM = "./target/test/resources/signatures/chapter02/multiple_signatures.pdf";
@@ -62,10 +69,10 @@ public class C2_10_SequentialSignatures extends SignatureTest {
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell("Signer 1: Alice");
         table.addCell(createSignatureFieldCell("sig1"));
-//        table.addCell("Signer 2: Bob");
-//        table.addCell(createSignatureFieldCell("sig2"));
-//        table.addCell("Signer 3: Carol");
-//        table.addCell(createSignatureFieldCell("sig3"));
+        table.addCell("Signer 2: Bob");
+        table.addCell(createSignatureFieldCell("sig2"));
+        table.addCell("Signer 3: Carol");
+        table.addCell(createSignatureFieldCell("sig3"));
         doc.add(table);
         doc.close();
     }
@@ -124,57 +131,76 @@ public class C2_10_SequentialSignatures extends SignatureTest {
         C2_10_SequentialSignatures app = new C2_10_SequentialSignatures();
         app.createForm();
 
-        // TODO DEVSIX-488
         app.sign(ALICE, PdfSigner.CERTIFIED_FORM_FILLING, FORM, "sig1", String.format(DEST, "alice"));
-//        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice"), "sig2", String.format(DEST, "bob"));
-//        app.sign(CAROL, PdfSigner.NOT_CERTIFIED, String.format(DEST, "bob"), "sig3", String.format(DEST, "carol"));
-//
-//        app.sign(ALICE, PdfSigner.NOT_CERTIFIED, FORM, "sig1", String.format(DEST, "alice2"));
-//        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice2"), "sig2", String.format(DEST, "bob2"));
-//        app.sign(CAROL, PdfSigner.CERTIFIED_FORM_FILLING, String.format(DEST, "bob2"), "sig3", String.format(DEST, "carol2"));
-//
-//        app.sign(ALICE, PdfSigner.NOT_CERTIFIED, FORM, "sig1", String.format(DEST, "alice3"));
-//        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice3"), "sig2", String.format(DEST, "bob3"));
-//        app.sign(CAROL, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, String.format(DEST, "bob3"), "sig3", String.format(DEST, "carol3"));
-//
-//        app.sign(ALICE, PdfSigner.CERTIFIED_FORM_FILLING, FORM, "sig1", String.format(DEST, "alice4"));
-//        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice4"), "sig2", String.format(DEST, "bob4"));
-//        app.sign(CAROL, PdfSigner.CERTIFIED_FORM_FILLING, String.format(DEST, "bob4"), "sig3", String.format(DEST, "carol4"));
+        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice"), "sig2", String.format(DEST, "bob"));
+        app.sign(CAROL, PdfSigner.NOT_CERTIFIED, String.format(DEST, "bob"), "sig3", String.format(DEST, "carol"));
+
+        app.sign(ALICE, PdfSigner.NOT_CERTIFIED, FORM, "sig1", String.format(DEST, "alice2"));
+        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice2"), "sig2", String.format(DEST, "bob2"));
+        app.sign(CAROL, PdfSigner.CERTIFIED_FORM_FILLING, String.format(DEST, "bob2"), "sig3", String.format(DEST, "carol2"));
+
+        app.sign(ALICE, PdfSigner.NOT_CERTIFIED, FORM, "sig1", String.format(DEST, "alice3"));
+        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice3"), "sig2", String.format(DEST, "bob3"));
+        app.sign(CAROL, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, String.format(DEST, "bob3"), "sig3", String.format(DEST, "carol3"));
+
+        app.sign(ALICE, PdfSigner.CERTIFIED_FORM_FILLING, FORM, "sig1", String.format(DEST, "alice4"));
+        app.sign(BOB, PdfSigner.NOT_CERTIFIED, String.format(DEST, "alice4"), "sig2", String.format(DEST, "bob4"));
+        app.sign(CAROL, PdfSigner.CERTIFIED_FORM_FILLING, String.format(DEST, "bob4"), "sig3", String.format(DEST, "carol4"));
     }
 
     @Test
     public void runTest() throws IOException, InterruptedException, GeneralSecurityException {
         new File("./target/test/resources/signatures/chapter02/").mkdirs();
         C2_10_SequentialSignatures.main(null);
-//
-//        String[] resultFiles =
-//                new String[]{"signed_by_alice.pdf", "signed_by_bob.pdf", "signed_by_carol.pdf",
-//                        "signed_by_alice2.pdf", "signed_by_bob2.pdf", "signed_by_carol2.pdf",
-//                        "signed_by_alice3.pdf", "signed_by_bob3.pdf", "signed_by_carol3.pdf"};
-//
-//        String destPath = String.format(outPath, "chapter02");
-//        String comparePath = String.format(cmpPath, "chapter02");
-//
-//        String[] errors = new String[resultFiles.length];
-//        boolean error = false;
-//
-//        HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() {
-//            {
-//                put(1, Arrays.asList(new Rectangle(46, 472, 287, 255)));
-//            }
-//        };
-//
-//        for (int i = 0; i < resultFiles.length; i++) {
-//            String resultFile = resultFiles[i];
-//            String fileErrors = checkForErrors(destPath + resultFile, comparePath + "cmp_" + resultFile, destPath, ignoredAreas);
-//            if (fileErrors != null) {
-//                errors[i] = fileErrors;
-//                error = true;
-//            }
-//        }
-//
-//        if (error) {
-//            fail(accumulateErrors(errors));
-//        }
+
+        String[] resultFiles =
+                new String[]{"signed_by_alice.pdf", "signed_by_bob.pdf", "signed_by_carol.pdf",
+                        "signed_by_alice2.pdf", "signed_by_bob2.pdf",
+                        "signed_by_alice3.pdf", "signed_by_bob3.pdf",
+                        "signed_by_alice4.pdf", "signed_by_bob4.pdf",
+
+                        // TODO: this file should be invalid from dig sig point of view, however both Acrobat and iText doesn't recognize it
+                        // (certification signatures shall be the first signatures in the document, still signatures themselves are not broken in it).
+                        "signed_by_carol2.pdf",
+
+                        // TODO: iText doesn't recognize invalidated signatures in these files,
+                        // because we don't check that document shall have only one certification signature and it shall be the first one.
+                        // However signatures themselves are not broken.
+                        "signed_by_carol3.pdf", "signed_by_carol4.pdf",
+
+                };
+
+        String destPath = String.format(outPath, "chapter02");
+        String comparePath = String.format(cmpPath, "chapter02");
+
+        String[] errors = new String[resultFiles.length];
+        boolean error = false;
+
+        HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() {
+            {
+                put(1, Arrays.asList(new Rectangle(55, 550, 287, 255)));
+            }
+        };
+
+        for (int i = 0; i < resultFiles.length; i++) {
+            String resultFile = resultFiles[i];
+            String fileErrors = checkForErrors(destPath + resultFile, comparePath + "cmp_" + resultFile, destPath, ignoredAreas);
+            if (fileErrors != null) {
+                errors[i] = fileErrors;
+                error = true;
+            }
+        }
+
+        if (error) {
+            fail(accumulateErrors(errors));
+        }
+    }
+
+    @Override
+    protected void initKeyStoreForVerification(KeyStore ks) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+        super.initKeyStoreForVerification(ks);
+        ks.setCertificateEntry("alice", loadCertificateFromKeyStore(ALICE, PASSWORD));
+        ks.setCertificateEntry("bob", loadCertificateFromKeyStore(BOB, PASSWORD));
+        ks.setCertificateEntry("carol", loadCertificateFromKeyStore(CAROL, PASSWORD));
     }
 }

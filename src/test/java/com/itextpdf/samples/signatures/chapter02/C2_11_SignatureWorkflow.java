@@ -43,16 +43,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.fail;
 
-@Ignore
 @Category(SampleTest.class)
 public class C2_11_SignatureWorkflow extends SignatureTest {
     public static final String FORM = "./target/test/resources/signatures/chapter02/form.pdf";
@@ -108,7 +110,6 @@ public class C2_11_SignatureWorkflow extends SignatureTest {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), true);
         // Setting signer options
         signer.setFieldName(name);
-        // TODO DEVSIX-488
         signer.setCertificationLevel(PdfSigner.CERTIFIED_FORM_FILLING);
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, "SHA-256", "BC");
@@ -232,7 +233,7 @@ public class C2_11_SignatureWorkflow extends SignatureTest {
 
         HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() {
             {
-                put(1, Arrays.asList(new Rectangle(38f, 743f, 215f, 759f), new Rectangle(38f, 676f, 215f, 692f), new Rectangle(38f, 611f, 215f, 627f)));
+                put(1, Arrays.asList(new Rectangle(55, 440, 287, 365)));
             }
         };
 
@@ -248,5 +249,14 @@ public class C2_11_SignatureWorkflow extends SignatureTest {
         if (error) {
             fail(accumulateErrors(errors));
         }
+    }
+
+    @Override
+    protected void initKeyStoreForVerification(KeyStore ks) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+        super.initKeyStoreForVerification(ks);
+        ks.setCertificateEntry("alice", loadCertificateFromKeyStore(ALICE, PASSWORD));
+        ks.setCertificateEntry("bob", loadCertificateFromKeyStore(BOB, PASSWORD));
+        ks.setCertificateEntry("carol", loadCertificateFromKeyStore(CAROL, PASSWORD));
+        ks.setCertificateEntry("dave", loadCertificateFromKeyStore(DAVE, PASSWORD));
     }
 }
