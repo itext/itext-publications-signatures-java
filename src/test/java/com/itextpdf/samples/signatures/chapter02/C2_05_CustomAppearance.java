@@ -15,7 +15,7 @@
  */
 package com.itextpdf.samples.signatures.chapter02;
 
-import com.itextpdf.kernel.color.ColorConstants;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;

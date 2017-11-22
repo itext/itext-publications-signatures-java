@@ -25,6 +25,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.samples.SignatureTest;
@@ -65,7 +66,7 @@ public class C2_10_SequentialSignatures extends SignatureTest {
     public void createForm() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FORM));
         Document doc = new Document(pdfDoc);
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell("Signer 1: Alice");
         table.addCell(createSignatureFieldCell("sig1"));
         table.addCell("Signer 2: Bob");

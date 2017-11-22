@@ -100,10 +100,10 @@ public class C2_09_SignatureTypes extends SignatureTest {
         PdfReader reader = new PdfReader(src);
         PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(dest), new StampingProperties().useAppendMode());
         PdfAnnotation comment = new PdfTextAnnotation(new Rectangle(200, 800, 50, 20))
+                .setOpen(true)
                 .setIconName(new PdfName("Comment"))
                 .setTitle(new PdfString("Finally Signed!"))
-                .setContents("Bruno Specimen has finally signed the document")
-                .setOpen(true);
+                .setContents("Bruno Specimen has finally signed the document");
         pdfDoc.getFirstPage().addAnnotation(comment);
         pdfDoc.close();
     }
@@ -112,10 +112,10 @@ public class C2_09_SignatureTypes extends SignatureTest {
         PdfReader reader = new PdfReader(src);
         PdfDocument pdfDoc = new PdfDocument(reader, new PdfWriter(dest));
         PdfAnnotation comment = new PdfTextAnnotation(new Rectangle(200, 800, 50, 20))
+                .setOpen(true)
                 .setIconName(new PdfName("Comment"))
                 .setTitle(new PdfString("Finally Signed!"))
-                .setContents("Bruno Specimen has finally signed the document")
-                .setOpen(true);
+                .setContents("Bruno Specimen has finally signed the document");
         pdfDoc.getFirstPage().addAnnotation(comment);
         pdfDoc.close();
     }
@@ -197,7 +197,7 @@ public class C2_09_SignatureTypes extends SignatureTest {
 
         HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() {
             {
-                put(1, Arrays.asList(new Rectangle(70f, 692f, 170f, 20f), new Rectangle(70f, 742f, 170f, 20f)));
+                put(1, Arrays.asList(new Rectangle(72f, 675f, 170f, 20f), new Rectangle(72f, 725f, 170f, 20f)));
             }
         };
 

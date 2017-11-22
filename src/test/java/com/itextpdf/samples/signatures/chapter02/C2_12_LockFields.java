@@ -16,7 +16,7 @@
 package com.itextpdf.samples.signatures.chapter02;
 
 import com.itextpdf.forms.PdfAcroForm;
-import com.itextpdf.forms.PdfSigFieldLockDictionary;
+import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -28,6 +28,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.samples.SignatureTest;
@@ -83,20 +84,20 @@ public class C2_12_LockFields extends SignatureTest {
     public void createForm() throws IOException {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FORM));
         Document doc = new Document(pdfDoc);
-        Table table = new Table(1);
+        Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
         table.addCell("Written by Alice");
         table.addCell(createSignatureFieldCell("sig1", null));
         table.addCell("For approval by Bob");
         table.addCell(createTextFieldCell("approved_bob"));
-        PdfSigFieldLockDictionary lock = new PdfSigFieldLockDictionary().setFieldLock(PdfSigFieldLockDictionary.LockAction.INCLUDE, "sig1", "approved_bob", "sig2");
+        PdfSigFieldLock lock = new PdfSigFieldLock().setFieldLock(PdfSigFieldLock.LockAction.INCLUDE, "sig1", "approved_bob", "sig2");
         table.addCell(createSignatureFieldCell("sig2", lock));
         table.addCell("For approval by Carol");
         table.addCell(createTextFieldCell("approved_carol"));
-        lock = new PdfSigFieldLockDictionary().setFieldLock(PdfSigFieldLockDictionary.LockAction.EXCLUDE, "approved_dave", "sig4");
+        lock = new PdfSigFieldLock().setFieldLock(PdfSigFieldLock.LockAction.EXCLUDE, "approved_dave", "sig4");
         table.addCell(createSignatureFieldCell("sig3", lock));
         table.addCell("For approval by Dave");
         table.addCell(createTextFieldCell("approved_dave"));
-        lock = new PdfSigFieldLockDictionary().setDocumentPermissions(PdfSigFieldLockDictionary.LockPermissions.NO_CHANGES_ALLOWED);
+        lock = new PdfSigFieldLock().setDocumentPermissions(PdfSigFieldLock.LockPermissions.NO_CHANGES_ALLOWED);
         table.addCell(createSignatureFieldCell("sig4", lock));
         doc.add(table);
         doc.close();
@@ -174,7 +175,7 @@ public class C2_12_LockFields extends SignatureTest {
         return cell;
     }
 
-    protected Cell createSignatureFieldCell(String name, PdfSigFieldLockDictionary lock) throws IOException {
+    protected Cell createSignatureFieldCell(String name, PdfSigFieldLock lock) throws IOException {
         Cell cell = new Cell();
         cell.setHeight(50);
         cell.setNextRenderer(new SignatureFieldCellRenderer(cell, name, lock));
@@ -201,9 +202,9 @@ public class C2_12_LockFields extends SignatureTest {
 
     class SignatureFieldCellRenderer extends CellRenderer {
         public String name;
-        public PdfSigFieldLockDictionary lock;
+        public PdfSigFieldLock lock;
 
-        public SignatureFieldCellRenderer(Cell modelElement, String name, PdfSigFieldLockDictionary lock) {
+        public SignatureFieldCellRenderer(Cell modelElement, String name, PdfSigFieldLock lock) {
             super(modelElement);
             this.name = name;
             this.lock = lock;
