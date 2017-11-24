@@ -15,8 +15,8 @@
  */
 package com.itextpdf.samples.signatures.chapter02;
 
-import com.itextpdf.io.font.FontConstants;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -70,7 +70,7 @@ public class C2_06_SignatureAppearance extends SignatureTest {
         signer.setFieldName(name);
         // Custom text and custom font
         appearance.setLayer2Text("This document was signed by Bruno Specimen");
-        appearance.setLayer2Font(PdfFontFactory.createFont(FontConstants.TIMES_ROMAN));
+        appearance.setLayer2Font(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN));
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
