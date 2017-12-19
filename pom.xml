@@ -16,8 +16,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
         <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
-        <licensekey.version>3.0.0-SNAPSHOT</licensekey.version>
-        <typography.version>2.0.0-SNAPSHOT</typography.version>
+        <licensekey.version>3.0.0</licensekey.version>
+        <typography.version>2.0.1-SNAPSHOT</typography.version>
     </properties>
 
     <repositories>
