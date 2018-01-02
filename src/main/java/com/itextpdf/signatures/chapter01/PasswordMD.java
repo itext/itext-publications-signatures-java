@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017, iText Group NV.
+    Copyright (c) 1998-2018 iText Group NV
  * This example was created by Bruno Lowagie.
  * It was written in the context of the following book:
  * http://developers.itextpdf.com/content/itext-7-digital-signatures-pdf
