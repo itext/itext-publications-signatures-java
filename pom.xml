@@ -4,7 +4,7 @@
 
     <groupId>com.itextpdf.samples</groupId>
     <artifactId>signatures</artifactId>
-    <version>7.1.2-SNAPSHOT</version>
+    <version>7.1.3-SNAPSHOT</version>
 
     <name>iText 7 Publications: Signatures</name>
     <url>http://itextpdf.com/</url>
@@ -16,7 +16,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
         <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
-        <licensekey.version>3.0.0</licensekey.version>
+        <licensekey.version>3.0.2</licensekey.version>
         <typography.version>2.0.1-SNAPSHOT</typography.version>
     </properties>
 
