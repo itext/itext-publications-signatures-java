@@ -84,8 +84,8 @@ public class C5_01_SignatureIntegrity extends SignatureTest {
     public PdfPKCS7 verifySignature(SignatureUtil signUtil, String name) throws GeneralSecurityException, IOException {
         System.out.println("Signature covers whole document: " + signUtil.signatureCoversWholeDocument(name));
         System.out.println("Document revision: " + signUtil.getRevision(name) + " of " + signUtil.getTotalRevisions());
-        PdfPKCS7 pkcs7 = signUtil.verifySignature(name);
-        System.out.println("Integrity check OK? " + pkcs7.verify());
+        PdfPKCS7 pkcs7 = signUtil.readSignatureData(name);
+        System.out.println("Integrity check OK? " + pkcs7.verifySignatureIntegrityAndAuthenticity());
         return pkcs7;
     }
 
