@@ -176,10 +176,10 @@ public class SignatureTest {
 
     private void verifySignatures(SignatureUtil signUtil, List<String> names) throws IOException, GeneralSecurityException {
         for (String name : names) {
-            PdfPKCS7 pkcs7 = signUtil.verifySignature(name);
+            PdfPKCS7 pkcs7 = signUtil.readSignatureData(name);
 
             // verify signature integrity
-            if (!pkcs7.verify()) {
+            if (!pkcs7.verifySignatureIntegrityAndAuthenticity()) {
                 addError(String.format("\"%s\" signature integrity is invalid\n", name));
             }
 
@@ -277,7 +277,7 @@ public class SignatureTest {
                 sigInfo.setSignaturePosition(widgetAnnotationsList.get(0).getRectangle().toRectangle());
             }
 
-            PdfPKCS7 pkcs7 = signUtil.verifySignature(name);
+            PdfPKCS7 pkcs7 = signUtil.readSignatureData(name);
             sigInfo.setDigestAlgorithm(pkcs7.getHashAlgorithm());
             sigInfo.setEncryptionAlgorithm(pkcs7.getEncryptionAlgorithm());
             PdfName filterSubtype = pkcs7.getFilterSubtype();
