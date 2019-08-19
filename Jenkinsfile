@@ -35,7 +35,7 @@ pipeline {
     stages {
         stage('Compile') {
             steps {
-                withMaven(jdk: '1.8', maven: 'M3') {
+                withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
                     sh 'mvn compile test-compile'
                 }
             }
@@ -47,7 +47,7 @@ pipeline {
                         timeout(time: 1, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
                             sh 'mvn checkstyle:checkstyle'
                         }
                     }
@@ -69,7 +69,7 @@ pipeline {
                         timeout(time: 1, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
                             sh 'mvn findbugs:check'
                         }
                     }
@@ -79,7 +79,7 @@ pipeline {
                         timeout(time: 1, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
                             sh 'mvn pmd:pmd -Dpmd.analysisCache=true'
                         }
                     }
@@ -112,7 +112,7 @@ pipeline {
                         timeout(time: 1, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
                             sh 'mvn surefire:test -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.failOnError=false'
                         }
                     }
@@ -127,7 +127,7 @@ pipeline {
                         timeout(time: 10, unit: 'MINUTES')
                     }
                     steps {
-                        withMaven(jdk: '1.8', maven: 'M3') {
+                        withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
                             sh 'mvn failsafe:integration-test failsafe:verify -DgsExec=$(which gs) -DcompareExec=$(which compare) -Dmaven.test.skip=false -Dmaven.test.failure.ignore=false -Dmaven.javadoc.failOnError=false'
                         }
                     }
