@@ -64,16 +64,6 @@ pipeline {
                         }
                     }
                 }
-                stage('Findbugs') {
-                    options {
-                        timeout(time: 1, unit: 'MINUTES')
-                    }
-                    steps {
-                        withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
-                            sh 'mvn findbugs:check'
-                        }
-                    }
-                }
                 stage('PMD') {
                     options {
                         timeout(time: 1, unit: 'MINUTES')
