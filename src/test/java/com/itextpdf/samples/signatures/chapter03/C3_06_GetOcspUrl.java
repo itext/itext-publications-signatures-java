@@ -35,7 +35,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
-@Ignore("DEVSIX-561: Put property file with valid data")
+@Ignore("Requires an eID card")
 @Category(SampleTest.class)
 public class C3_06_GetOcspUrl extends SignatureTest {
     public static final  String expectedOutput = "";
