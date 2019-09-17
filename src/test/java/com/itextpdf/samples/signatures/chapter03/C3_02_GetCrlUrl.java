@@ -35,7 +35,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
-@Ignore("requires an eID card")
+@Ignore("requires a valid certificate which is issued by the service that provides CRL access point")
 @Category(SampleTest.class)
 public class C3_02_GetCrlUrl extends SignatureTest {
     public static final  String expectedOutput = "";

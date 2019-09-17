@@ -38,7 +38,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
-@Ignore("requires an eID card")
+@Ignore("requires a valid certificate which is issued by the service that provides OCSP and TSA access point")
 @Category(SampleTest.class)
 public class C3_12_SignWithEstimatedSize extends C3_01_SignWithCAcert {
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";

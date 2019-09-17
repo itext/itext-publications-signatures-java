@@ -35,7 +35,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
-@Ignore("requires an eID card")
+@Ignore("requires a valid certificate which is issued by the service that provides TSA access point")
 @Category(SampleTest.class)
 public class C3_08_GetTsaUrl extends SignatureTest {
     public static final  String expectedOutput = "";
