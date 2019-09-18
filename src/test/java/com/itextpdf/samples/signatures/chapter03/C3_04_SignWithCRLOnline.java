@@ -44,7 +44,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Category(SampleTest.class)
-@Ignore("DEVSIX-561: This test takes over 24 minutes to run")
+@Ignore("requires a valid certificate which is issued by the service that provides" +
+        " CRL access point, test takes over 24 minutes to run")
 public class C3_04_SignWithCRLOnline extends C3_01_SignWithCAcert {
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
     public static final String DEST = "./target/test/resources/signatures/chapter03/hello_cacert_crl.pdf";
