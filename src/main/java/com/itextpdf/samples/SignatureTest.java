@@ -110,7 +110,7 @@ public class SignatureTest {
         return output.toString().replace("\r\n", "\n");
     }
 
-    protected String checkForErrors(String outFile, String cmpFile, String destPath, Map<Integer, List<Rectangle>> ignoredAreas)
+    public String checkForErrors(String outFile, String cmpFile, String destPath, Map<Integer, List<Rectangle>> ignoredAreas)
             throws InterruptedException, IOException, GeneralSecurityException {
         errorMessage = null;
 
@@ -456,14 +456,6 @@ public class SignatureTest {
 
             Rectangle outFp = outSig.getSignaturePosition();
             Rectangle cmpFp = cmpSig.getSignaturePosition();
-
-//            int outFpPage = outFp.page;
-//            int cmpFpPage = cmpFp.page;
-//            if (outFpPage != cmpFpPage) {
-//                addComparisonError("Signature page",
-//                        String.valueOf(outFpPage),
-//                        String.valueOf(cmpFpPage));
-//            }
 
             String outPositionRect = outFp == null ? null : outFp.toString();
             String cmpPositionRect = cmpFp == null ? null : cmpFp.toString();
