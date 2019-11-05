@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 
-public class Chapter02Test extends WrappedSamplesRunner {
+public class SignatureRunnerTest extends WrappedSamplesRunner {
     private static final Map<String, List<Rectangle>> classAreaMap;
 
     static {
@@ -52,18 +52,40 @@ public class Chapter02Test extends WrappedSamplesRunner {
                 new ArrayList<Rectangle>(Arrays.asList(new Rectangle(46, 472, 287, 255))));
         classAreaMap.put("com.itextpdf.samples.signatures.chapter02.C2_08_SignatureMetadata",
                 new ArrayList<Rectangle>(Arrays.asList(new Rectangle(46, 472, 287, 255))));
+        classAreaMap.put("com.itextpdf.samples.signatures.chapter03.C3_01_SignWithCAcert",
+                new ArrayList<Rectangle>(Arrays.asList(new Rectangle(36, 648, 200, 100))));
     }
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
         searchConfig.addPackageToRunnerSearchPath("com.itextpdf.samples.signatures.chapter02");
+        searchConfig.addPackageToRunnerSearchPath("com.itextpdf.samples.signatures.chapter03");
 
-        // Samples are run by separate samples runner
+        // Samples are run by separate samples runners
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_12_LockFields");
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_10_SequentialSignatures");
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_09_SignatureTypes");
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_11_SignatureWorkflow");
+
+        // Samples require a valid certificate which is issued by the service that provides CRL access point
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_02_GetCrlUrl");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_03_SignWithCRLDefaultImp");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_04_SignWithCRLOnline");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_05_SignWithCRLOffline");
+
+        // Samples require a valid certificate which is issued by the service that provides OCSP
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_06_GetOcspUrl");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_07_SignWithOCSP");
+
+        // Samples require a valid certificate which is issued by the service that provides TSA access point
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_08_GetTsaUrl");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_09_SignWithTSA");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_10_SignWithTSAEvent");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_12_SignWithEstimatedSize");
+
+        // Sample requires USB token
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_11_SignWithToken");
 
         return generateTestsList(searchConfig);
     }

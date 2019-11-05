@@ -15,15 +15,10 @@
  */
 package com.itextpdf.samples.signatures.chapter03;
 
-import com.itextpdf.samples.SignatureTest;
 import com.itextpdf.signatures.CertificateUtil;
-import com.itextpdf.test.annotations.type.SampleTest;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.File;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -33,16 +28,12 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Properties;
 
-import static org.junit.Assert.fail;
-
-@Ignore("requires a valid certificate which is issued by the service that provides OCSP access point")
-@Category(SampleTest.class)
-public class C3_06_GetOcspUrl extends SignatureTest {
-    public static final  String expectedOutput = "";
-
+public class C3_06_GetOcspUrl {
     public static void main(String[] args) throws IOException, GeneralSecurityException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream("./src/test/resources/encryption/signkey.properties"));
+
+        // Specify the correct path to the certificate
+        properties.load(new FileInputStream("c:/home/blowagie/key.properties"));
         String path = properties.getProperty("PRIVATE");
         char[] pass = properties.getProperty("PASSWORD").toCharArray();
 
@@ -52,22 +43,11 @@ public class C3_06_GetOcspUrl extends SignatureTest {
         ks.load(new FileInputStream(path), pass);
         String alias = ks.aliases().nextElement();
         Certificate[] chain = ks.getCertificateChain(alias);
+
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];
             System.out.println(String.format("[%s] %s", i, cert.getSubjectDN()));
             System.out.println(CertificateUtil.getOCSPURL(cert));
-        }
-    }
-
-    @Test
-    public void runTest() throws IOException, InterruptedException, GeneralSecurityException {
-        new File("./target/test/resources/signatures/chapter03/").mkdirs();
-        setupSystemOutput();
-        C3_06_GetOcspUrl.main(null);
-        String sysOut = getSystemOutput();
-
-        if (!sysOut.equals(expectedOutput)) {
-            fail("Unexpected output.");
         }
     }
 }
