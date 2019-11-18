@@ -57,6 +57,10 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
                 new ArrayList<Rectangle>(Arrays.asList(new Rectangle(46, 472, 287, 255))));
         classAreaMap.put("com.itextpdf.samples.signatures.chapter03.C3_01_SignWithCAcert",
                 new ArrayList<Rectangle>(Arrays.asList(new Rectangle(36, 648, 200, 100))));
+        classAreaMap.put("com.itextpdf.samples.signatures.chapter04.C4_08_ServerClientSigning",
+                new ArrayList<Rectangle>(Arrays.asList(new Rectangle(38, 758, 72, 5))));
+        classAreaMap.put("com.itextpdf.samples.signatures.chapter04.C4_09_DeferredSigning",
+                new ArrayList<Rectangle>(Arrays.asList(new Rectangle(36, 748, 200, 100))));
     }
 
     @Parameterized.Parameters(name = "{index}: {0}")
@@ -64,12 +68,14 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
         searchConfig.addPackageToRunnerSearchPath("com.itextpdf.samples.signatures.chapter02");
         searchConfig.addPackageToRunnerSearchPath("com.itextpdf.samples.signatures.chapter03");
+        searchConfig.addPackageToRunnerSearchPath("com.itextpdf.samples.signatures.chapter04");
 
         // Samples are run by separate samples runners
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_12_LockFields");
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_10_SequentialSignatures");
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_09_SignatureTypes");
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter02.C2_11_SignatureWorkflow");
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter04.C4_07_ClientServerSigning");
 
         // Samples require a valid certificate which is issued by the service that provides CRL access point
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_02_GetCrlUrl");
@@ -89,6 +95,15 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
 
         // Sample requires USB token
         searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter03.C3_11_SignWithToken");
+
+        // Sample requires iKey4000 token and the corresponding dll.
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter04.C4_02_SignWithPKCS11USB");
+
+        // Sample requires a valid properties file
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter04.C4_01_SignWithPKCS11HSM");
+
+        // Sample requires a valid BeID dll file
+        searchConfig.ignorePackageOrClass("com.itextpdf.samples.signatures.chapter04.C4_03_SignWithPKCS11SC");
 
         return generateTestsList(searchConfig);
     }

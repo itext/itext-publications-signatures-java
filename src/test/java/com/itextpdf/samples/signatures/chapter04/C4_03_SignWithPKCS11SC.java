@@ -7,25 +7,36 @@
     sales@itextpdf.com
  */
 /*
-* This class is part of the white paper entitled
-* "Digital Signatures for PDF documents"
-* written by Bruno Lowagie
-*
-* For more info, go to: http://itextpdf.com/learn
-*/
+ * This class is part of the white paper entitled
+ * "Digital Signatures for PDF documents"
+ * written by Bruno Lowagie
+ *
+ * For more info, go to: http://itextpdf.com/learn
+ */
 package com.itextpdf.samples.signatures.chapter04;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Collection;
 import sun.security.pkcs11.SunPKCS11;
+
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.CrlClientOnline;
 import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.IExternalDigest;
+import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IOcspClient;
+import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
+import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.test.annotations.type.SampleTest;
+import com.itextpdf.signatures.PrivateKeySignature;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -38,76 +49,136 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+import sun.security.pkcs11.wrapper.CK_C_INITIALIZE_ARGS;
+import sun.security.pkcs11.wrapper.CK_TOKEN_INFO;
+import sun.security.pkcs11.wrapper.PKCS11;
+import sun.security.pkcs11.wrapper.PKCS11Exception;
 
-@Ignore("Put right property file with valid data and right dll path")
-@Category(SampleTest.class)
-public class C4_03_SignWithPKCS11SC extends C4_02_SignWithPKCS11USB {
+public class C4_03_SignWithPKCS11SC {
+    public static final String DEST = "./target/signatures/chapter04/";
+
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
-    public static final String DEST = "./target/test/resources/signatures/chapter04/hello_smartcard_%s.pdf";
-    public static final String DLL = "c:/windows/system32/beidpkcs11.dll";
+
+    public static final String[] RESULT_FILES = new String[] {
+            "hello_smartcard_Authentication.pdf",
+            "hello_smartcard_Signature.pdf"
+    };
 
     public static void main(String[] args) throws IOException, GeneralSecurityException {
-        String config = "name=beid\n" +
-                "library=" + DLL + "\n" +
-                "slotListIndex = " + getSlotsWithTokens(DLL)[0];
-        ByteArrayInputStream bais = new ByteArrayInputStream(config.getBytes());
-        Provider providerPKCS11 = new SunPKCS11(bais);
-        Security.addProvider(providerPKCS11);
-        BouncyCastleProvider providerBC = new BouncyCastleProvider();
-        Security.addProvider(providerBC);
-        KeyStore ks = KeyStore.getInstance("PKCS11");
-        ks.load(null, null);
-        Enumeration<String> aliases = ks.aliases();
-        while (aliases.hasMoreElements()) {
-            System.out.println(aliases.nextElement());
+        File file = new File(DEST);
+        file.mkdirs();
+
+        // Specify the correct path to the DLL.
+        String dllPath = "c:/windows/system32/beidpkcs11.dll";
+        long[] slots = getSlotsWithTokens(dllPath);
+        if (slots != null) {
+            String config = "name=beid\n" +
+                    "library=" + dllPath + "\n" +
+                    "slotListIndex = " + slots[0];
+            ByteArrayInputStream bais = new ByteArrayInputStream(config.getBytes());
+            Provider providerPKCS11 = new SunPKCS11(bais);
+            Security.addProvider(providerPKCS11);
+            BouncyCastleProvider providerBC = new BouncyCastleProvider();
+            Security.addProvider(providerBC);
+            KeyStore ks = KeyStore.getInstance("PKCS11");
+
+            /* All the signing operations are passed to the BeId API.
+             * That is why the stream and password are null.
+             */
+            ks.load(null, null);
+            Enumeration<String> aliases = ks.aliases();
+            while (aliases.hasMoreElements()) {
+                System.out.println(aliases.nextElement());
+            }
+
+            smartCardSign(providerPKCS11.getName(), ks, "Authentication", DEST + RESULT_FILES[0]);
+            smartCardSign(providerPKCS11.getName(), ks, "Signature", DEST + RESULT_FILES[1]);
+        } else {
+            System.out.println("An exception was encountered while getting token slot's indexes.");
         }
-        smartcardsign(providerPKCS11.getName(), ks, "Authentication");
-        smartcardsign(providerPKCS11.getName(), ks, "Signature");
     }
 
-    public static void smartcardsign(String provider, KeyStore ks, String alias) throws GeneralSecurityException, IOException {
+    public static void smartCardSign(String provider, KeyStore ks, String alias, String dest)
+            throws GeneralSecurityException, IOException {
         PrivateKey pk = (PrivateKey) ks.getKey(alias, null);
         Certificate[] chain = ks.getCertificateChain(alias);
         IOcspClient ocspClient = new OcspClientBouncyCastle(null);
         List<ICrlClient> crlList = new ArrayList<ICrlClient>();
         crlList.add(new CrlClientOnline(chain));
-        C4_03_SignWithPKCS11SC app = new C4_03_SignWithPKCS11SC();
-        app.sign(SRC, String.format(DEST, alias), chain, pk, DigestAlgorithms.SHA256, provider, PdfSigner.CryptoStandard.CMS,
-                "Test", "Ghent", crlList, ocspClient, null, 0);
+
+        new C4_03_SignWithPKCS11SC().sign(SRC, dest, chain, pk, DigestAlgorithms.SHA256, provider,
+                PdfSigner.CryptoStandard.CMS, "Test", "Ghent",
+                crlList, ocspClient, null, 0);
     }
 
-    @Test
-    public void runTest() throws IOException, InterruptedException, GeneralSecurityException {
-        new File("./target/test/resources/signatures/chapter04/").mkdirs();
-        C4_03_SignWithPKCS11SC.main(null);
+    public void sign(String src, String dest, Certificate[] chain, PrivateKey pk,
+            String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
+            String reason, String location, Collection<ICrlClient> crlList,
+            IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize)
+            throws GeneralSecurityException, IOException {
+        PdfReader reader = new PdfReader(src);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        String[] resultFiles = new String[]{ "hello_smartcard_Authentication.pdf", "hello_smartcard_Signature.pdf" };
+        // Create the signature appearance
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance
+                .setReason(reason)
+                .setLocation(location)
 
-        String destPath = String.format(outPath, "chapter04");
-        String comparePath = String.format(cmpPath, "chapter04");
+                // Specify if the appearance before field is signed will be used
+                // as a background for the signed field. The "false" value is the default value.
+                .setReuseAppearance(false)
+                .setPageRect(rect)
+                .setPageNumber(1);
+        signer.setFieldName("sig");
 
-        String[] errors = new String[resultFiles.length];
-        boolean error = false;
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
+        IExternalDigest digest = new BouncyCastleDigest();
 
-//        HashMap<Integer, List<Rectangle>> ignoredAreas = new HashMap<Integer, List<Rectangle>>() { {
-//            put(1, Arrays.asList(new Rectangle(36, 648, 200, 100)));
-//        }};
+        // Sign the document using the detached mode, CMS or CAdES equivalent.
+        signer.signDetached(digest, pks, chain, crlList, ocspClient, tsaClient, estimatedSize, subfilter);
+    }
 
-        for (int i = 0; i < resultFiles.length; i++) {
-            String resultFile = resultFiles[i];
-            String fileErrors = checkForErrors(destPath + resultFile, comparePath + "cmp_" + resultFile, destPath, /*ignoredAreas*/ null);
-            if (fileErrors != null) {
-                errors[i] = fileErrors;
-                error = true;
+    // Method returns a list of token slot's indexes
+    public static long[] getSlotsWithTokens(String libraryPath) {
+        CK_C_INITIALIZE_ARGS initArgs = new CK_C_INITIALIZE_ARGS();
+        String functionList = "C_GetFunctionList";
+
+        initArgs.flags = 0;
+        PKCS11 tmpPKCS11 = null;
+        long[] slotList = null;
+        try {
+            try {
+                tmpPKCS11 = PKCS11.getInstance(libraryPath, functionList, initArgs, false);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        } catch (PKCS11Exception e) {
+            try {
+                initArgs = null;
+                tmpPKCS11 = PKCS11.getInstance(libraryPath, functionList, initArgs, true);
+            } catch (IOException | PKCS11Exception ex) {
+                ex.printStackTrace();
+                return null;
             }
         }
 
-        if (error) {
-            fail(accumulateErrors(errors));
+        try {
+            slotList = tmpPKCS11.C_GetSlotList(true);
+
+            for (long slot : slotList) {
+                CK_TOKEN_INFO tokenInfo = tmpPKCS11.C_GetTokenInfo(slot);
+                System.out.println("slot: " + slot + "\nmanufacturerID: "
+                        + String.valueOf(tokenInfo.manufacturerID) + "\nmodel: "
+                        + String.valueOf(tokenInfo.model));
+            }
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+            return null;
         }
+
+        return slotList;
     }
 }
