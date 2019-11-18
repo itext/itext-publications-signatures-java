@@ -13,6 +13,7 @@ import com.itextpdf.samples.SignatureTest;
 import com.itextpdf.samples.signatures.chapter02.C2_10_SequentialSignatures;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
+import com.itextpdf.test.annotations.type.SampleTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.Parameterized;
 
+@Category(SampleTest.class)
 public class SequentialSignaturesTest extends WrappedSamplesRunner {
     private static final Map<Integer, List<Rectangle>> ignoredAreaMap;
 

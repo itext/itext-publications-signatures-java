@@ -87,7 +87,7 @@ public class C2_11_SignatureWorkflow {
 
         String carolFilledFile = DEST + RESULT_FILES[3];
         String carolSignedFile = DEST + RESULT_FILES[4];
-        app.fillOut(DEST + bobSignedFile, carolFilledFile,
+        app.fillOut(bobSignedFile, carolFilledFile,
                 "approved_carol", "Read and Approved by Carol");
         app.sign(CAROL, provider.getName(), carolFilledFile, "sig3",
                 carolSignedFile);

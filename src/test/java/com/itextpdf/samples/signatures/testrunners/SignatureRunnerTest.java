@@ -16,8 +16,10 @@ import com.itextpdf.licensekey.LicenseKey;
 import com.itextpdf.samples.SignatureTest;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
+import com.itextpdf.test.annotations.type.SampleTest;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.Parameterized;
 
 import java.io.File;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collection;
 
+@Category(SampleTest.class)
 public class SignatureRunnerTest extends WrappedSamplesRunner {
     private static final Map<String, List<Rectangle>> classAreaMap;
 
