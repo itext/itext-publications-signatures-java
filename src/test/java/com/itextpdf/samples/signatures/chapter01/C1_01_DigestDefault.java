@@ -15,25 +15,18 @@
  */
 package com.itextpdf.samples.signatures.chapter01;
 
-import com.itextpdf.samples.SignatureTest;
-import com.itextpdf.test.annotations.type.SampleTest;
-
 import java.io.File;
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+public class C1_01_DigestDefault {
+    public static final String DEST = "./target/test/resources/signatures/chapter01/";
 
-@Ignore("The result differs on different machines")
-@Category(SampleTest.class)
-public class C1_01_DigestDefault extends SignatureTest {
-    public static final String expectedOutput = "Digest using MD5: 16\n" +
+    public static final String EXPECTED_OUTPUT = "Digest using MD5: 16\n" +
             "Digest: 5f4dcc3b5aa765d61d8327deb882cf99\n" +
             "Is the password 'password'? true\n" +
             "Is the password 'secret'? false\n" +
@@ -50,11 +43,13 @@ public class C1_01_DigestDefault extends SignatureTest {
             "Is the password 'password'? true\n" +
             "Is the password 'secret'? false\n" +
             "Digest using SHA-384: 48\n" +
-            "Digest: a8b64babd0aca91a59bdbb7761b421d4f2bb38280d3a75ba0f21f2bebc45583d446c598660c94ce680c47d19c30783a7\n" +
+            "Digest: a8b64babd0aca91a59bdbb7761b421d4f2bb38280d3a75ba0f21f2bebc4558" +
+            "3d446c598660c94ce680c47d19c30783a7\n" +
             "Is the password 'password'? true\n" +
             "Is the password 'secret'? false\n" +
             "Digest using SHA-512: 64\n" +
-            "Digest: b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86\n" +
+            "Digest: b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b" +
+            "1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86\n" +
             "Is the password 'password'? true\n" +
             "Is the password 'secret'? false\n" +
             "RIPEMD128 MessageDigest not available\n" +
@@ -62,35 +57,28 @@ public class C1_01_DigestDefault extends SignatureTest {
             "RIPEMD256 MessageDigest not available\n";
 
     protected byte[] digest;
-    protected MessageDigest md;
+    protected MessageDigest messageDigest;
 
-    public C1_01_DigestDefault() {
-        // this constructor is implemented only for junit testing reasons
-        // and does nothing
+    protected C1_01_DigestDefault(String password, String algorithm, String provider) throws GeneralSecurityException,
+            UnsupportedEncodingException {
+        if (provider == null) {
+            messageDigest = MessageDigest.getInstance(algorithm);
+        } else {
+            messageDigest = MessageDigest.getInstance(algorithm, provider);
+        }
+        digest = messageDigest.digest(password.getBytes("UTF-8"));
     }
 
-    protected C1_01_DigestDefault(String password, String algorithm, String provider) throws GeneralSecurityException {
-        if (provider == null)
-            md = MessageDigest.getInstance(algorithm);
-        else
-            md = MessageDigest.getInstance(algorithm, provider);
-        digest = md.digest(password.getBytes());
-    }
-
-    public static C1_01_DigestDefault getInstance(String password, String algorithm) throws GeneralSecurityException {
+    public static C1_01_DigestDefault getInstance(String password, String algorithm) throws GeneralSecurityException,
+            UnsupportedEncodingException {
         return new C1_01_DigestDefault(password, algorithm, null);
     }
 
-    public static void showTest(String algorithm) {
-        try {
-            C1_01_DigestDefault app = getInstance("password", algorithm);
-            System.out.println("Digest using " + algorithm + ": " + app.getDigestSize());
-            System.out.println("Digest: " + app.getDigestAsHexString());
-            System.out.println("Is the password 'password'? " + app.checkPassword("password"));
-            System.out.println("Is the password 'secret'? " + app.checkPassword("secret"));
-        } catch (GeneralSecurityException e) {
-            System.out.println(e.getMessage());
-        }
+    public static void main(String[] args) {
+        File file = new File(DEST);
+        file.mkdirs();
+
+        testAll();
     }
 
     public static void testAll() {
@@ -105,8 +93,16 @@ public class C1_01_DigestDefault extends SignatureTest {
         showTest("RIPEMD256");
     }
 
-    public static void main(String[] args) {
-        testAll();
+    public static void showTest(String algorithm) {
+        try {
+            C1_01_DigestDefault app = getInstance("password", algorithm);
+            System.out.println("Digest using " + algorithm + ": " + app.getDigestSize());
+            System.out.println("Digest: " + app.getDigestAsHexString());
+            System.out.println("Is the password 'password'? " + app.checkPassword("password"));
+            System.out.println("Is the password 'secret'? " + app.checkPassword("secret"));
+        } catch (Exception exc) {
+            System.out.println(exc.getMessage());
+        }
     }
 
     public int getDigestSize() {
@@ -117,26 +113,10 @@ public class C1_01_DigestDefault extends SignatureTest {
         return new BigInteger(1, digest).toString(16);
     }
 
+    /* This method checks if the digest of the password is equal
+     * to the digest of the text line which is passed as argument
+     */
     public boolean checkPassword(String password) {
-        return Arrays.equals(digest, md.digest(password.getBytes()));
-    }
-
-    @Test
-    public void runTest() throws GeneralSecurityException, IOException, InterruptedException {
-        new File("./target/test/resources/signatures/chapter01/").mkdirs();
-        setupSystemOutput();
-        C1_01_DigestDefault.main(null);
-        String sysOut = getSystemOutput();
-
-        String[] outputLines = sysOut.split("\n");
-        String[] expectedLines = expectedOutput.split("\n");
-
-        for (int i = 0; i < outputLines.length; ++i) {
-            String line = outputLines[i];
-            if (!line.startsWith("Digest: ") && !line.trim().equals(expectedLines[i].trim())) {
-                String error = "Unexpected output at line %d.\nExpected: %s\ngot: %s";
-                fail(String.format(error, i + 1, expectedLines[i], outputLines[i]));
-            }
-        }
+        return Arrays.equals(digest, messageDigest.digest(password.getBytes()));
     }
 }
