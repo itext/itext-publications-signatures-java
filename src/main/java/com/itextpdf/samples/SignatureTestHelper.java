@@ -26,12 +26,9 @@ import com.itextpdf.signatures.SignatureUtil;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.VerificationOK;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.LogListener;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -56,7 +53,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 
 /**
  * Due to import control restrictions by the governments of a few countries,
@@ -70,45 +66,13 @@ import org.junit.Rule;
  * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
  * are available for download from http://java.oracle.com/ in eligible countries.
  */
-public class SignatureTest {
+public class SignatureTestHelper {
 
     public static final String ADOBE = "./src/test/resources/encryption/adobeRootCA.cer";
     public static final String CACERT = "./src/test/resources/encryption/CACertSigningAuthority.crt";
     public static final String BRUNO = "./src/test/resources/encryption/bruno.crt";
 
-    public static final String cmpPath = "./src/test/resources/signatures/%s/";
-    public static final String outPath = "./target/test/resources/signatures/%s/";
-
     private String errorMessage;
-
-    private PrintStream oldSysOut;
-    private ByteArrayOutputStream output;
-
-    @Before
-    public void before() {
-        ITextTest.removeCryptographyRestrictions();
-    }
-
-    @After
-    public void after() {
-        ITextTest.restoreCryptographyRestrictions();
-    }
-
-    @Rule
-    public LogListener logListener = new LogListener();
-
-    protected void setupSystemOutput() {
-        output = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(output);
-        oldSysOut = System.out;
-        System.setOut(ps);
-    }
-
-    protected String getSystemOutput() {
-        System.out.flush();
-        System.setOut(oldSysOut);
-        return output.toString().replace("\r\n", "\n");
-    }
 
     public String checkForErrors(String outFile, String cmpFile, String destPath, Map<Integer, List<Rectangle>> ignoredAreas)
             throws InterruptedException, IOException, GeneralSecurityException {
@@ -207,6 +171,7 @@ public class SignatureTest {
 
         X509Certificate signCert = (X509Certificate)certs[0];
         X509Certificate issuerCert = (certs.length > 1 ? (X509Certificate)certs[1] : null);
+
         //Checking validity of the document at the time of signing
         checkRevocation(pkcs7, signCert, issuerCert, cal.getTime());
     }
@@ -508,16 +473,6 @@ public class SignatureTest {
         }
     }
 
-    protected String accumulateErrors(String[] errors) {
-        String result = "";
-        for (String error : errors) {
-            if (error != null) {
-                result += error + "\n";
-            }
-        }
-        return result;
-    }
-
     private boolean checkIfEqual(Object obj1, Object obj2) {
         return !checkNulls(obj1, obj2) || (obj1 != null && !obj1.equals(obj2));
     }
@@ -541,9 +496,5 @@ public class SignatureTest {
 
             errorMessage += error;
         }
-    }
-
-    protected String getErrorMessage() {
-        return errorMessage;
     }
 }

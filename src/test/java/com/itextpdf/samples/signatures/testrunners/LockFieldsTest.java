@@ -9,7 +9,7 @@
 package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.samples.SignatureTest;
+import com.itextpdf.samples.SignatureTestHelper;
 import com.itextpdf.samples.signatures.chapter02.C2_12_LockFields;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
@@ -74,7 +74,7 @@ public class LockFieldsTest extends WrappedSamplesRunner {
                  * because we don't check changes in new revisions against old signatures (permissions,
                  * certifications, content changes), however signatures themselves are not broken.
                  */
-                addError(new SignatureTest() {
+                addError(new SignatureTestHelper() {
                     @Override
                     protected void initKeyStoreForVerification(KeyStore ks)
                             throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {

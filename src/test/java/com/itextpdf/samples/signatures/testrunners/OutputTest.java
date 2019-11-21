@@ -23,7 +23,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 
 @Category(SampleTest.class)
-public class DigestTest extends WrappedSamplesRunner {
+public class OutputTest extends WrappedSamplesRunner {
     private PrintStream oldSysOut;
     private ByteArrayOutputStream output;
 
@@ -32,6 +32,8 @@ public class DigestTest extends WrappedSamplesRunner {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
         searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter01.C1_01_DigestDefault");
         searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter01.C1_02_DigestBC");
+        searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter05.C5_01_SignatureIntegrity");
+        searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter05.C5_02_SignatureInfo");
 
         return generateTestsList(searchConfig);
     }

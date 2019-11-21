@@ -9,7 +9,7 @@
 package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.samples.SignatureTest;
+import com.itextpdf.samples.SignatureTestHelper;
 import com.itextpdf.samples.signatures.chapter04.C4_07_ClientServerSigning;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
@@ -66,7 +66,7 @@ public class ClientServerSigningTest extends WrappedSamplesRunner {
             String currentDest = dest + resultFiles[i];
             String currentCmp = cmp + resultFiles[i];
             try {
-                addError(new SignatureTest() {
+                addError(new SignatureTestHelper() {
                     @Override
                     protected void initKeyStoreForVerification(KeyStore ks)
                             throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {

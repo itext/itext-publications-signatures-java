@@ -13,7 +13,7 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.licensekey.LicenseKey;
-import com.itextpdf.samples.SignatureTest;
+import com.itextpdf.samples.SignatureTestHelper;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
 import com.itextpdf.test.annotations.type.SampleTest;
@@ -129,7 +129,7 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
             String currentDest = dest + resultFiles[i];
             String currentCmp = cmp + resultFiles[i];
             try {
-                addError(new SignatureTest().checkForErrors(currentDest, currentCmp, outPath, ignoredAreasMap));
+                addError(new SignatureTestHelper().checkForErrors(currentDest, currentCmp, outPath, ignoredAreasMap));
             } catch (InterruptedException | IOException | GeneralSecurityException exc) {
                 addError("Exception has been thrown: " + exc.getMessage());
             }

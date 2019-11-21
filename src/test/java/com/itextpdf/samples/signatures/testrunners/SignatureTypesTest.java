@@ -9,7 +9,7 @@
 package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.samples.SignatureTest;
+import com.itextpdf.samples.SignatureTestHelper;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
 import com.itextpdf.test.annotations.type.SampleTest;
@@ -71,7 +71,7 @@ public class SignatureTypesTest extends WrappedSamplesRunner {
                  * (permissions, certifications, content changes),
                  * however signatures themselves are not broken.
                  */
-                String result = new SignatureTest()
+                String result = new SignatureTestHelper()
                         .checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap);
 
                 if (result != null) {

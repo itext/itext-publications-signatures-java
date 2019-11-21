@@ -9,7 +9,7 @@
 package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.samples.SignatureTest;
+import com.itextpdf.samples.SignatureTestHelper;
 import com.itextpdf.samples.signatures.chapter02.C2_10_SequentialSignatures;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
@@ -73,7 +73,7 @@ public class SequentialSignaturesTest extends WrappedSamplesRunner {
                  * have only one certification signature and it shall be the first one.
                  * However signatures themselves are not broken.
                  */
-                addError(new SignatureTest() {
+                addError(new SignatureTestHelper() {
                     @Override
                     protected void initKeyStoreForVerification(KeyStore ks)
                             throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
