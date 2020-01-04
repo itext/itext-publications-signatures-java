@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     For more information, please contact iText Software at this address:
@@ -201,7 +201,7 @@ public class C5_03_CertificateValidation {
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, ocsps);
         List<VerificationOK> verification = ocspVerifier.verify(signCert, issuerCert, date);
 
-        // If that list is empty, we can’t verify using OCSP, and we need to look for CRLs.
+        // If that list is empty, we can't verify using OCSP, and we need to look for CRLs.
         if (verification.size() == 0) {
             List<X509CRL> crls = new ArrayList<X509CRL>();
             if (pkcs7.getCRLs() != null) {

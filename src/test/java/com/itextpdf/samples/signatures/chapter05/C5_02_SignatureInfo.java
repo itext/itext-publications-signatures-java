@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     For more information, please contact iText Software at this address:
@@ -218,7 +218,7 @@ public class C5_02_SignatureInfo {
             System.out.println("Contact info: " + contact);
         }
 
-        /* Every new signature can add more restrictions to a document, but it can’t take away previous restrictions.
+        /* Every new signature can add more restrictions to a document, but it can't take away previous restrictions.
          * So if you want to retrieve information about signatures restrictions, you need to pass
          * the SignaturePermissions instance of the previous signature, or null if there was none.
          */
