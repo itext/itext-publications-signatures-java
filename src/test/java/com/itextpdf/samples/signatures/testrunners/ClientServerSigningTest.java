@@ -10,6 +10,7 @@ package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.samples.SignatureTestHelper;
+import com.itextpdf.samples.signatures.chapter04.C4_07_ClientServerSigning;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
 import com.itextpdf.test.annotations.type.SampleTest;
@@ -17,7 +18,14 @@ import com.itextpdf.test.annotations.type.SampleTest;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,24 +37,19 @@ import org.junit.experimental.categories.Category;
 import org.junit.runners.Parameterized;
 
 @Category(SampleTest.class)
-public class SignatureTypesTest extends WrappedSamplesRunner {
+public class ClientServerSigningTest extends WrappedSamplesRunner {
     private static final Map<Integer, List<Rectangle>> ignoredAreaMap;
-
-    private static final String EXPECTED_ERROR_TEXT =
-            "\n./target/signatures/chapter02/hello_level_1_annotated_wrong.pdf:"
-                    + "\n\"sig\" signature integrity is invalid\n\n";
 
     static {
         ignoredAreaMap = new HashMap<>();
         ignoredAreaMap.put(1, new ArrayList<Rectangle>(Arrays.asList(
-                new Rectangle(72, 675, 170, 20),
-                new Rectangle(72, 725, 170, 20))));
+                new Rectangle(36, 648, 200, 100))));
     }
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
-        searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter02.C2_09_SignatureTypes");
+        searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter04.C4_07_ClientServerSigning");
 
         return generateTestsList(searchConfig);
     }
@@ -59,41 +62,26 @@ public class SignatureTypesTest extends WrappedSamplesRunner {
     @Override
     protected void comparePdf(String outPath, String dest, String cmp) {
         String[] resultFiles = getResultFiles(sampleClass);
-        StringBuilder errorTemp = new StringBuilder();
         for (int i = 0; i < resultFiles.length; i++) {
             String currentDest = dest + resultFiles[i];
             String currentCmp = cmp + resultFiles[i];
             try {
+                addError(new SignatureTestHelper() {
+                    @Override
+                    protected void initKeyStoreForVerification(KeyStore ks)
+                            throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
+                        super.initKeyStoreForVerification(ks);
+                        URL certUrl = new URL(C4_07_ClientServerSigning.CERT);
+                        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                        Certificate itextCert = cf.generateCertificate(certUrl.openStream());
+                        ks.setCertificateEntry("itext", itextCert);
 
-                /* iText doesn't recognize invalidated signatures in "hello_level_3_annotated.pdf",
-                 * "hello_level_4_annotated.pdf", "hello_level_1_text.pdf", "hello_level_4_double.pdf"
-                 * files, because we don't check changes in new revisions against old signatures
-                 * (permissions, certifications, content changes),
-                 * however signatures themselves are not broken.
-                 */
-                String result = new SignatureTestHelper()
-                        .checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap);
-
-                if (result != null) {
-                    errorTemp.append(result);
-                }
-
+                    }
+                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap));
             } catch (InterruptedException | IOException | GeneralSecurityException exc) {
-                errorTemp.append("Exception has been thrown: ").append(exc.getMessage());
+                addError("Exception has been thrown: " + exc.getMessage());
             }
         }
-
-        String errorText = errorTemp.toString();
-        if (errorText.equals("") || !errorText.contains(EXPECTED_ERROR_TEXT)) {
-            errorText += "\n'hello_level_1_annotated_wrong.pdf' file's signature "
-                    + "was expected to be invalid.\n\n";
-        } else {
-
-            // Expected error should be ignored
-            errorText = errorText.replace(EXPECTED_ERROR_TEXT, "");
-        }
-
-        addError(errorText);
     }
 
     @Override

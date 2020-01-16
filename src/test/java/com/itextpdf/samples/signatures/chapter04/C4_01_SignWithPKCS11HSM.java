@@ -1,24 +1,25 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     For more information, please contact iText Software at this address:
     sales@itextpdf.com
  */
 /*
-* This class is part of the white paper entitled
-* "Digital Signatures for PDF documents"
-* written by Bruno Lowagie
-*
-* For more info, go to: http://itextpdf.com/learn
-*/
+ * This class is part of the white paper entitled
+ * "Digital Signatures for PDF documents"
+ * written by Bruno Lowagie
+ *
+ * For more info, go to: http://itextpdf.com/learn
+ */
 package com.itextpdf.samples.signatures.chapter04;
 
 import sun.security.pkcs11.SunPKCS11;
+
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.samples.SignatureTest;
+import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.ICrlClient;
@@ -33,7 +34,6 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.TSAClientBouncyCastle;
-import com.itextpdf.test.annotations.type.SampleTest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,48 +52,24 @@ import java.util.List;
 import java.util.Properties;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-@Ignore("Put property file with valid data")
-@Category(SampleTest.class)
-public class C4_01_SignWithPKCS11HSM extends SignatureTest {
+public class C4_01_SignWithPKCS11HSM {
+    public static final String DEST = "./target/signatures/chapter04/";
+
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
-    public static final String DEST = "./target/test/resources/signatures/chapter04/hello_hsm.pdf";
-    public static final String PROPS = "./src/test/resources/encryption/signkey.properties";
 
-    public void sign(String src, String dest,
-                     Certificate[] chain, PrivateKey pk,
-                     String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
-                     String reason, String location,
-                     Collection<ICrlClient> crlList,
-                     IOcspClient ocspClient,
-                     ITSAClient tsaClient,
-                     int estimatedSize)
-            throws GeneralSecurityException, IOException {
-        // Creating the reader and the signer
-        PdfReader reader = new PdfReader(src);
-        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), false);
-        // Creating the appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance()
-                .setReason(reason)
-                .setLocation(location)
-                .setReuseAppearance(false);
-        Rectangle rect = new Rectangle(36, 648, 200, 100);
-        appearance
-                .setPageRect(rect)
-                .setPageNumber(1);
-        signer.setFieldName("sig");
-        // Creating the signature
-        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
-        IExternalDigest digest = new BouncyCastleDigest();
-        signer.signDetached(digest, pks, chain, crlList, ocspClient, tsaClient, estimatedSize, subfilter);
-    }
+    public static final String[] RESULT_FILES = new String[] {
+            "hello_hsm.pdf"
+    };
 
     public static void main(String[] args) throws IOException, GeneralSecurityException {
+        File file = new File(DEST);
+        file.mkdirs();
+
         Properties properties = new Properties();
-        properties.load(new FileInputStream(PROPS));
+
+        // Specify the correct path to the certificate
+        properties.load(new FileInputStream("C:/signkey.properties"));
         char[] pass = properties.getProperty("PASSWORD").toCharArray();
         String pkcs11cfg = properties.getProperty("PKCS11CFG");
 
@@ -118,19 +94,41 @@ public class C4_01_SignWithPKCS11HSM extends SignatureTest {
                 break;
             }
         }
+
         List<ICrlClient> crlList = new ArrayList<ICrlClient>();
         crlList.add(new CrlClientOnline(chain));
-        C4_01_SignWithPKCS11HSM app = new C4_01_SignWithPKCS11HSM();
-        app.sign(SRC, DEST, chain, pk, DigestAlgorithms.SHA256, providerPKCS11.getName(), PdfSigner.CryptoStandard.CMS,
+
+        new C4_01_SignWithPKCS11HSM().sign(SRC, DEST + RESULT_FILES[0], chain, pk,
+                DigestAlgorithms.SHA256, providerPKCS11.getName(), PdfSigner.CryptoStandard.CMS,
                 "HSM test", "Ghent", crlList, ocspClient, tsaClient, 0);
     }
 
-    /**
-     * In this test we only run the sample. If no exception were thrown - test succeeds.
-     */
-    @Test
-    public void runTest() throws GeneralSecurityException, IOException, InterruptedException {
-        new File("./target/test/resources/signatures/chapter04/").mkdirs();
-        C4_01_SignWithPKCS11HSM.main(null);
+    public void sign(String src, String dest, Certificate[] chain, PrivateKey pk,
+            String digestAlgorithm, String provider, PdfSigner.CryptoStandard subfilter,
+            String reason, String location, Collection<ICrlClient> crlList,
+            IOcspClient ocspClient, ITSAClient tsaClient, int estimatedSize)
+            throws GeneralSecurityException, IOException {
+        PdfReader reader = new PdfReader(src);
+        PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
+
+        // Create the signature appearance
+        Rectangle rect = new Rectangle(36, 648, 200, 100);
+        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
+        appearance
+                .setReason(reason)
+                .setLocation(location)
+
+                // Specify if the appearance before field is signed will be used
+                // as a background for the signed field. The "false" value is the default value.
+                .setReuseAppearance(false)
+                .setPageRect(rect)
+                .setPageNumber(1);
+        signer.setFieldName("sig");
+
+        IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
+        IExternalDigest digest = new BouncyCastleDigest();
+
+        // Sign the document using the detached mode, CMS or CAdES equivalent.
+        signer.signDetached(digest, pks, chain, crlList, ocspClient, tsaClient, estimatedSize, subfilter);
     }
 }

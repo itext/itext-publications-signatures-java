@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2019 iText Group NV
+    Copyright (c) 1998-2020 iText Group NV
     Authors: iText Software.
 
     For more information, please contact iText Software at this address:
@@ -87,7 +87,7 @@ public class C2_11_SignatureWorkflow {
 
         String carolFilledFile = DEST + RESULT_FILES[3];
         String carolSignedFile = DEST + RESULT_FILES[4];
-        app.fillOut(DEST + bobSignedFile, carolFilledFile,
+        app.fillOut(bobSignedFile, carolFilledFile,
                 "approved_carol", "Read and Approved by Carol");
         app.sign(CAROL, provider.getName(), carolFilledFile, "sig3",
                 carolSignedFile);

@@ -1,16 +1,27 @@
+/*
+    This file is part of the iText (R) project.
+    Copyright (c) 1998-2020 iText Group NV
+    Authors: iText Software.
+
+    For more information, please contact iText Software at this address:
+    sales@itextpdf.com
+ */
 package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
+import com.itextpdf.test.annotations.type.SampleTest;
 
 import java.io.UnsupportedEncodingException;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.Parameterized;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 
+@Category(SampleTest.class)
 public class EncryptDecryptTest extends WrappedSamplesRunner {
     private PrintStream oldSysOut;
     private ByteArrayOutputStream output;
