@@ -23,6 +23,7 @@ import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignaturePermissions;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.VerificationOK;
 import com.itextpdf.test.ITextTest;
@@ -47,12 +48,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
-import org.junit.After;
-import org.junit.Before;
 
 /**
  * Due to import control restrictions by the governments of a few countries,
@@ -185,7 +183,7 @@ public class SignatureTestHelper {
             addError("The certificate wasn't valid yet at the time of signing.");
         }
 
-        if (pkcs7.getTimeStampDate() != null) {
+        if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != pkcs7.getTimeStampDate()) {
             if (!pkcs7.verifyTimestampImprint()) {
                 addError("Timestamp is invalid.");
             }
@@ -255,7 +253,7 @@ public class SignatureTestHelper {
             sigInfo.setAlternativeSignerName(pkcs7.getSignName());
 
             sigInfo.setSignDate(pkcs7.getSignDate().getTime());
-            if (pkcs7.getTimeStampDate() != null) {
+            if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != pkcs7.getTimeStampDate()) {
                 sigInfo.setTimeStamp(pkcs7.getTimeStampDate().getTime());
                 TimeStampToken ts = pkcs7.getTimeStampToken();
                 sigInfo.setTimeStampService(ts.getTimeStampInfo().getTsa().toString());
