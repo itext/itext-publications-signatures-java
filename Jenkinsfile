@@ -11,7 +11,6 @@ pipeline {
     options {
         ansiColor('xterm')
         buildDiscarder(logRotator(artifactNumToKeepStr: '1'))
-        compressBuildLog()
         parallelsAlwaysFailFast()
         retry(1)
         skipStagesAfterUnstable()
@@ -33,6 +32,16 @@ pipeline {
     }
 
     stages {
+        stage('Clean workspace') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            steps {
+                withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
+                    sh 'mvn --threads 2C --no-transfer-progress clean dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
+                }
+            }
+        }
         stage('Compile') {
             steps {
                 withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
