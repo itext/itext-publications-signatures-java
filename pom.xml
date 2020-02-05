@@ -7,7 +7,6 @@
   <name>iText 7 Publications: Signatures</name>
   <url>http://itextpdf.com/</url>
   <properties>
-    <bouncycastle.version>1.64</bouncycastle.version>
     <java.version>1.7</java.version>
     <licensekey.version>3.0.6</licensekey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,18 +69,6 @@
       <groupId>com.itextpdf</groupId>
       <artifactId>typography</artifactId>
       <version>${typography.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
-      <optional>true</optional>
     </dependency>
   </dependencies>
   <build>
