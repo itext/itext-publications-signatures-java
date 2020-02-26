@@ -38,7 +38,7 @@ pipeline {
             }
             steps {
                 withMaven(jdk: '1.8', maven: 'M3', mavenLocalRepo: '.repository') {
-                    sh 'mvn --threads 2C --no-transfer-progress clean dependency:purge-local-repository -Dinclude=com.itextpdf -DresolutionFuzziness=groupId -DreResolve=false'
+                    sh 'mvn --threads 2C --no-transfer-progress clean dependency:purge-local-repository -DsnapshotsOnly=true -DreResolve=false'
                 }
             }
         }
