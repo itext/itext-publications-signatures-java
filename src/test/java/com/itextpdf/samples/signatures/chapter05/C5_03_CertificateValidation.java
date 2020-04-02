@@ -22,6 +22,7 @@ import com.itextpdf.signatures.CertificateVerification;
 import com.itextpdf.signatures.OCSPVerifier;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignatureUtil;
+import com.itextpdf.signatures.TimestampConstants;
 import com.itextpdf.signatures.VerificationException;
 import com.itextpdf.signatures.VerificationOK;
 
@@ -31,7 +32,6 @@ import ch.qos.logback.core.AppenderBase;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.FileSystem;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
@@ -48,7 +48,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.LoggerFactory;
@@ -116,7 +115,7 @@ public class C5_03_CertificateValidation {
         Calendar cal = pkcs7.getTimeStampDate();
 
         // If there is no timestamp, use the current date
-        if (cal == null) {
+        if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE == cal) {
             cal = Calendar.getInstance();
         }
 

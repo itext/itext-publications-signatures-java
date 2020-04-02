@@ -17,21 +17,17 @@ package com.itextpdf.samples.signatures.chapter05;
 
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.signatures.CertificateInfo;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.SignaturePermissions;
 import com.itextpdf.signatures.SignatureUtil;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TimeStampToken;
+import com.itextpdf.signatures.TimestampConstants;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -39,6 +35,8 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.tsp.TimeStampToken;
 
 public class C5_02_SignatureInfo {
     public static final String DEST = "./target/test/resources/signatures/chapter05/";
@@ -199,7 +197,7 @@ public class C5_02_SignatureInfo {
          * Timestamp is a secure source of signature creation time,
          * because it's based on Time Stamping Authority service.
          */
-        if (pkcs7.getTimeStampDate() != null) {
+        if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != pkcs7.getTimeStampDate()) {
             System.out.println("TimeStamp: " + date_format.format(pkcs7.getTimeStampDate().getTime()));
             TimeStampToken ts = pkcs7.getTimeStampToken();
             System.out.println("TimeStamp service: " + ts.getTimeStampInfo().getTsa());
