@@ -97,7 +97,7 @@ public class C2_04_CreateEmptyField {
                 .rectangle(0 + 0.5, 0 + 0.5, 200 - 0.5, 100 - 0.5)
                 .fillStroke()
                 .setFillColor(ColorConstants.BLUE);
-        new Canvas(canvas, pdfDoc, rect).showTextAligned("SIGN HERE", 100, 50,
+        new Canvas(canvas, rect).showTextAligned("SIGN HERE", 100, 50,
                 TextAlignment.CENTER, (float) Math.toRadians(25));
 
         // Note that Acrobat doesn't show normal appearance in the highlight mode.
