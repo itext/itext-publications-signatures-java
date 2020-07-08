@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.samples</groupId>
   <artifactId>signatures</artifactId>
-  <version>7.1.12-SNAPSHOT</version>
+  <version>7.1.12</version>
   <name>iText 7 Publications: Signatures</name>
   <url>http://itextpdf.com/</url>
   <properties>
@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
-    <typography.version>2.0.7-SNAPSHOT</typography.version>
+    <typography.version>2.0.7</typography.version>
     <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
   <repositories>
