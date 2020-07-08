@@ -1,18 +1,3 @@
-/*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2020 iText Group NV
-    Authors: iText Software.
-
-    For more information, please contact iText Software at this address:
-    sales@itextpdf.com
- */
-/*
- * This class is part of the white paper entitled
- * "Digital Signatures for PDF documents"
- * written by Bruno Lowagie
- *
- * For more info, go to: http://itextpdf.com/learn
- */
 package com.itextpdf.samples.signatures.chapter02;
 
 import com.itextpdf.forms.PdfAcroForm;
@@ -112,7 +97,7 @@ public class C2_04_CreateEmptyField {
                 .rectangle(0 + 0.5, 0 + 0.5, 200 - 0.5, 100 - 0.5)
                 .fillStroke()
                 .setFillColor(ColorConstants.BLUE);
-        new Canvas(canvas, pdfDoc, rect).showTextAligned("SIGN HERE", 100, 50,
+        new Canvas(canvas, rect).showTextAligned("SIGN HERE", 100, 50,
                 TextAlignment.CENTER, (float) Math.toRadians(25));
 
         // Note that Acrobat doesn't show normal appearance in the highlight mode.

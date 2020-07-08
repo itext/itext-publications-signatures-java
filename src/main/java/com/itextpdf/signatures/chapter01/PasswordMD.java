@@ -1,10 +1,3 @@
-/*
-    Copyright (c) 1998-2020 iText Group NV
- * This example was created by Bruno Lowagie.
- * It was written in the context of the following book:
- * http://developers.itextpdf.com/content/itext-7-digital-signatures-pdf
- * Go to http://developers.itextpdf.com for more info.
- */
 package com.itextpdf.signatures.chapter01;
 
 import java.math.BigInteger;
