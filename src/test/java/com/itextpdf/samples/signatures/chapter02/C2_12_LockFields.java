@@ -187,7 +187,7 @@ public class C2_12_LockFields {
         return cell;
     }
 
-    protected static Cell createSignatureFieldCell(String name, PdfSigFieldLock lock) throws IOException {
+    protected static Cell createSignatureFieldCell(String name, PdfSigFieldLock lock) {
         Cell cell = new Cell();
         cell.setHeight(50);
         cell.setNextRenderer(new SignatureFieldCellRenderer(cell, name, lock));

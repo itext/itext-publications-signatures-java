@@ -62,11 +62,11 @@ public class C1_03_EncryptDecrypt {
         return (X509Certificate) ks.getCertificate(alias);
     }
 
-    private Key getPublicKey(String alias) throws GeneralSecurityException, IOException {
+    private Key getPublicKey(String alias) throws GeneralSecurityException {
         return getCertificate(alias).getPublicKey();
     }
 
-    private Key getPrivateKey(String alias, String pk_pass) throws GeneralSecurityException, IOException {
+    private Key getPrivateKey(String alias, String pk_pass) throws GeneralSecurityException {
         return ks.getKey(alias, pk_pass.toCharArray());
     }
 
