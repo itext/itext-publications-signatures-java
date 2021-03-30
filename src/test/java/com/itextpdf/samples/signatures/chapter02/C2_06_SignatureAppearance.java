@@ -4,6 +4,7 @@ import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
@@ -91,7 +92,7 @@ public class C2_06_SignatureAppearance {
         // Characters: لورانس العرب
         Text text = new Text("\u0644\u0648\u0631\u0627\u0646\u0633 \u0627\u0644\u0639\u0631\u0628");
         text.setFont(PdfFontFactory.createFont("./src/test/resources/font/NotoNaskhArabic-Regular.ttf",
-                PdfEncodings.IDENTITY_H, true));
+                PdfEncodings.IDENTITY_H, EmbeddingStrategy.PREFER_EMBEDDED));
         text.setBaseDirection(BaseDirection.RIGHT_TO_LEFT);
         new Canvas(n2, signer.getDocument()).add(new Paragraph(text).setTextAlignment(TextAlignment.RIGHT));
 
