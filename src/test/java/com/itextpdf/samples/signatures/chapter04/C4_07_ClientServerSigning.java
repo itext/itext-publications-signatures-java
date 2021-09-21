@@ -1,6 +1,6 @@
 package com.itextpdf.samples.signatures.chapter04;
 
-import com.itextpdf.kernel.PdfException;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -11,12 +11,12 @@ import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.File;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.GeneralSecurityException;
