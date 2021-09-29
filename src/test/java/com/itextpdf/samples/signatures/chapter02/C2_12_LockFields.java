@@ -12,7 +12,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.property.UnitValue;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.signatures.BouncyCastleDigest;
@@ -187,7 +187,7 @@ public class C2_12_LockFields {
         return cell;
     }
 
-    protected static Cell createSignatureFieldCell(String name, PdfSigFieldLock lock) throws IOException {
+    protected static Cell createSignatureFieldCell(String name, PdfSigFieldLock lock) {
         Cell cell = new Cell();
         cell.setHeight(50);
         cell.setNextRenderer(new SignatureFieldCellRenderer(cell, name, lock));

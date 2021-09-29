@@ -10,28 +10,27 @@ package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.io.font.FontCache;
 import com.itextpdf.io.font.FontProgramFactory;
-import com.itextpdf.kernel.Version;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.licensekey.LicenseKey;
+import com.itextpdf.licensing.base.LicenseKey;
 import com.itextpdf.samples.SignatureTestHelper;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
 import com.itextpdf.test.annotations.type.SampleTest;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runners.Parameterized;
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.GeneralSecurityException;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runners.Parameterized;
 
 @Category(SampleTest.class)
 public class SignatureRunnerTest extends WrappedSamplesRunner {
@@ -110,12 +109,15 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
 
     @Test(timeout = 60000)
     public void test() throws Exception {
-        LicenseKey.loadLicenseFile(System.getenv("ITEXT7_LICENSEKEY") + "/all-products.xml");
+        try (FileInputStream license = new FileInputStream(System.getenv("ITEXT7_LICENSEKEY")
+                + "/all-products.json")) {
+            LicenseKey.loadLicenseFile(license);
+        }
         FontCache.clearSavedFonts();
         FontProgramFactory.clearRegisteredFonts();
 
         runSamples();
-        unloadLicense();
+        LicenseKey.unloadLicenses();
     }
 
     @Override
@@ -154,20 +156,6 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
             return (String[]) obj;
         } catch (Exception e) {
             return null;
-        }
-    }
-
-    private void unloadLicense() {
-        try {
-            Field validators = LicenseKey.class.getDeclaredField("validators");
-            validators.setAccessible(true);
-            validators.set(null, null);
-            Field versionField = Version.class.getDeclaredField("version");
-            versionField.setAccessible(true);
-            versionField.set(null, null);
-        } catch (Exception ignored) {
-
-            // No exception handling required, because there can be no license loaded
         }
     }
 }
