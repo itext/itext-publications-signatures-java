@@ -3,6 +3,8 @@ package com.itextpdf.samples.signatures.chapter02;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -206,7 +208,8 @@ public class C2_12_LockFields {
         @Override
         public void draw(DrawContext drawContext) {
             super.draw(drawContext);
-            PdfFormField field = PdfFormField.createText(drawContext.getDocument(), getOccupiedAreaBBox(), name);
+            PdfFormField field = new TextFormFieldBuilder(drawContext.getDocument(), name)
+                    .setWidgetRectangle(getOccupiedAreaBBox()).createText();
             PdfAcroForm.getAcroForm(drawContext.getDocument(), true).addField(field);
         }
     }
@@ -225,8 +228,8 @@ public class C2_12_LockFields {
         @Override
         public void draw(DrawContext drawContext) {
             super.draw(drawContext);
-            PdfFormField field = PdfFormField.createSignature(drawContext.getDocument(), getOccupiedAreaBBox());
-            field.setFieldName(name);
+            PdfFormField field = new SignatureFormFieldBuilder(drawContext.getDocument(), name)
+                    .setWidgetRectangle(getOccupiedAreaBBox()).createSignature();
             if (lock != null) {
                 field.put(PdfName.Lock, lock.makeIndirect(drawContext.getDocument()).getPdfObject());
             }
