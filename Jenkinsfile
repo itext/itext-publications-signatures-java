@@ -2,6 +2,6 @@
 @Library('pipeline-library')_
 
 def repoName = "Signatures"
-def dependencyRegex = "(itextcore|typography)"
+def dependencyRegex = "(itextcore|typography|licensekey)"
 
 automaticJavaBuild(repoName, dependencyRegex)
