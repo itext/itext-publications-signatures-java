@@ -1,5 +1,7 @@
 package com.itextpdf.samples.signatures.chapter05;
 
+import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.CRLVerifier;
@@ -33,7 +35,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.LoggerFactory;
 
@@ -51,15 +52,15 @@ public class C5_03_CertificateValidation {
             + "Integrity check OK? true\n"
             + "Certificates verified against the KeyStore\n"
             + "=== Certificate 0 ===\n"
-            + "Issuer: C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot\n"
-            + "Subject: C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRsaCert01\n"
+            + "Issuer: CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY\n"
+            + "Subject: CN=iTextTestRsaCert01, OU=test, O=iText, L=Minsk, C=BY\n"
             + "Valid from: 2017-04-07-15-33\n"
             + "Valid to: 2117-04-07-15-33\n"
             + "The certificate was valid at the time of signing.\n"
             + "The certificate is still valid.\n"
             + "=== Certificate 1 ===\n"
-            + "Issuer: C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot\n"
-            + "Subject: C=BY,L=Minsk,O=iText,OU=test,CN=iTextTestRoot\n"
+            + "Issuer: CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY\n"
+            + "Subject: CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY\n"
             + "Valid from: 2017-04-07-13-20\n"
             + "Valid to: 2117-04-07-13-20\n"
             + "The certificate was valid at the time of signing.\n"
@@ -176,9 +177,9 @@ public class C5_03_CertificateValidation {
 
     public static void checkRevocation(PdfPKCS7 pkcs7, X509Certificate signCert, X509Certificate issuerCert, Date date)
             throws GeneralSecurityException, IOException {
-        List<BasicOCSPResp> ocsps = new ArrayList<BasicOCSPResp>();
+        List<IBasicOCSPResp> ocsps = new ArrayList<>();
         if (pkcs7.getOcsp() != null) {
-            ocsps.add(pkcs7.getOcsp());
+            ocsps.add(new BasicOCSPRespBC(((BasicOCSPRespBC) pkcs7.getOcsp()).getBasicOCSPResp()));
         }
 
         // Check if the OCSP responses in the list were valid for the certificate on a specific date.

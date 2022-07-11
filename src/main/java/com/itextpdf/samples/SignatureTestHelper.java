@@ -1,5 +1,8 @@
 package com.itextpdf.samples;
 
+import com.itextpdf.bouncycastle.asn1.tsp.TSTInfoBC;
+import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
+import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -40,9 +43,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TimeStampToken;
 
 /**
  * Due to import control restrictions by the governments of a few countries,
@@ -183,9 +185,9 @@ public class SignatureTestHelper {
     }
 
     private void checkRevocation(PdfPKCS7 pkcs7, X509Certificate signCert, X509Certificate issuerCert, Date date) throws GeneralSecurityException, IOException {
-        List<BasicOCSPResp> ocsps = new ArrayList<BasicOCSPResp>();
+        List<IBasicOCSPResp> ocsps = new ArrayList<>();
         if (pkcs7.getOcsp() != null)
-            ocsps.add(pkcs7.getOcsp());
+            ocsps.add(new BasicOCSPRespBC(((BasicOCSPRespBC) pkcs7.getOcsp()).getBasicOCSPResp()));
         OCSPVerifier ocspVerifier = new OCSPVerifier(null, ocsps);
         List<VerificationOK> verification =
                 ocspVerifier.verify(signCert, issuerCert, date);
@@ -247,8 +249,8 @@ public class SignatureTestHelper {
             sigInfo.setSignDate(pkcs7.getSignDate().getTime());
             if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != pkcs7.getTimeStampDate()) {
                 sigInfo.setTimeStamp(pkcs7.getTimeStampDate().getTime());
-                TimeStampToken ts = pkcs7.getTimeStampToken();
-                sigInfo.setTimeStampService(ts.getTimeStampInfo().getTsa().toString());
+                TSTInfo ts = ((TSTInfoBC) pkcs7.getTimeStampTokenInfo()).getTstInfo();
+                sigInfo.setTimeStampService(ts.getTsa().toString());
             }
 
             sigInfo.setLocation(pkcs7.getLocation());
