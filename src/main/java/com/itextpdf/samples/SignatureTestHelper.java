@@ -235,8 +235,8 @@ public class SignatureTestHelper {
             }
 
             PdfPKCS7 pkcs7 = signUtil.readSignatureData(name);
-            sigInfo.setDigestAlgorithm(pkcs7.getHashAlgorithm());
-            sigInfo.setEncryptionAlgorithm(pkcs7.getEncryptionAlgorithm());
+            sigInfo.setDigestAlgorithm(pkcs7.getDigestAlgorithmName());
+            sigInfo.setSignatureAlgorithm(pkcs7.getSignatureAlgorithmName());
             PdfName filterSubtype = pkcs7.getFilterSubtype();
             if (filterSubtype != null) {
                 sigInfo.setFilterSubtype(filterSubtype.toString());
@@ -329,8 +329,8 @@ public class SignatureTestHelper {
                 addComparisonError("Digest algorithm", outDigestAlg, cmpDigestAlg);
             }
 
-            String outEncryptAlg = outSig.getEncryptionAlgorithm();
-            String cmpEncryptAlg = cmpSig.getEncryptionAlgorithm();
+            String outEncryptAlg = outSig.getSignatureAlgorithm();
+            String cmpEncryptAlg = cmpSig.getSignatureAlgorithm();
             if (checkIfEqual(outEncryptAlg, cmpEncryptAlg)) {
                 addComparisonError("Encryption algorithm", outEncryptAlg, cmpEncryptAlg);
             }

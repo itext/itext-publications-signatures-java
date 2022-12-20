@@ -159,8 +159,8 @@ public class C5_02_SignatureInfo {
          * and how the signed bytes are stored in the PDF
          */
         PdfPKCS7 pkcs7 = verifySignature(signUtil, name);
-        System.out.println("Digest algorithm: " + pkcs7.getHashAlgorithm());
-        System.out.println("Encryption algorithm: " + pkcs7.getEncryptionAlgorithm());
+        System.out.println("Digest algorithm: " + pkcs7.getDigestAlgorithmName());
+        System.out.println("Encryption algorithm: " + pkcs7.getSignatureAlgorithmName());
         System.out.println("Filter subtype: " + pkcs7.getFilterSubtype());
 
         // Get the signing certificate to find out the name of the signer.

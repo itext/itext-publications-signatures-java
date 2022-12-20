@@ -74,11 +74,11 @@ public class C4_07_ClientServerSigning {
     public class ServerSignature implements IExternalSignature {
         public static final String SIGN = "http://demo.itextsupport.com/SigningApp/signbytes";
 
-        public String getHashAlgorithm() {
+        public String getDigestAlgorithmName() {
             return DigestAlgorithms.SHA256;
         }
 
-        public String getEncryptionAlgorithm() {
+        public String getSignatureAlgorithmName() {
             return "RSA";
         }
 

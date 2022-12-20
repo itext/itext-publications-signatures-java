@@ -10,7 +10,7 @@ public class SignatureInfo {
     private boolean signatureCoversWholeDocument;
     private Rectangle signaturePosition;
     private String digestAlgorithm;
-    private String encryptionAlgorithm;
+    private String signatureAlgorithm;
     private String filterSubtype;
     private String signerName;
     private String alternativeSignerName;
@@ -59,12 +59,12 @@ public class SignatureInfo {
         return digestAlgorithm;
     }
 
-    public void setEncryptionAlgorithm(String encryptionAlgorithm) {
-        this.encryptionAlgorithm = encryptionAlgorithm;
+    public void setSignatureAlgorithm(String signatureAlgorithm) {
+        this.signatureAlgorithm = signatureAlgorithm;
     }
 
-    public String getEncryptionAlgorithm() {
-        return encryptionAlgorithm;
+    public String getSignatureAlgorithm() {
+        return signatureAlgorithm;
     }
 
     public void setFilterSubtype(String filterSubtype) {
