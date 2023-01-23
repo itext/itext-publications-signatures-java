@@ -63,7 +63,7 @@ public class C2_04_CreateEmptyField {
         // Create a signature form field
         PdfFormField field = new SignatureFormFieldBuilder(pdfDoc, SIGNAME)
                 .setWidgetRectangle(new Rectangle(72, 632, 200, 100)).createSignature();
-        field.setPage(1);
+        field.getFirstFormAnnotation().setPage(1);
 
         // Set the widget properties
         field.getWidgets().get(0).setHighlightMode(PdfAnnotation.HIGHLIGHT_INVERT).setFlags(PdfAnnotation.PRINT);
