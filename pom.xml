@@ -8,7 +8,7 @@
   <url>http://itextpdf.com/</url>
   <properties>
     <java.version>1.8</java.version>
-    <licensekey.version>4.0.5-SNAPSHOT</licensekey.version>
+    <licensekey.version>4.1.0-SNAPSHOT</licensekey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
