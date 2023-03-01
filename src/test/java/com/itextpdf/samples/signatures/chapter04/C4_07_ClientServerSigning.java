@@ -4,12 +4,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
-import com.itextpdf.signatures.IExternalDigest;
-import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
-import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -80,6 +75,11 @@ public class C4_07_ClientServerSigning {
 
         public String getSignatureAlgorithmName() {
             return "RSA";
+        }
+
+        @Override
+        public ISignatureMechanismParams getSignatureMechanismParameters() {
+            return null;
         }
 
         public byte[] sign(byte[] message) throws GeneralSecurityException {
