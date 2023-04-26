@@ -1,5 +1,6 @@
 package com.itextpdf.samples.signatures.chapter05;
 
+import com.itextpdf.bouncycastle.asn1.tsp.TSTInfoBC;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -20,8 +21,8 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.tsp.TimeStampToken;
 
 public class C5_02_SignatureInfo {
     public static final String DEST = "./target/test/resources/signatures/chapter05/";
@@ -158,8 +159,8 @@ public class C5_02_SignatureInfo {
          * and how the signed bytes are stored in the PDF
          */
         PdfPKCS7 pkcs7 = verifySignature(signUtil, name);
-        System.out.println("Digest algorithm: " + pkcs7.getHashAlgorithm());
-        System.out.println("Encryption algorithm: " + pkcs7.getEncryptionAlgorithm());
+        System.out.println("Digest algorithm: " + pkcs7.getDigestAlgorithmName());
+        System.out.println("Encryption algorithm: " + pkcs7.getSignatureAlgorithmName());
         System.out.println("Filter subtype: " + pkcs7.getFilterSubtype());
 
         // Get the signing certificate to find out the name of the signer.
@@ -184,8 +185,8 @@ public class C5_02_SignatureInfo {
          */
         if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != pkcs7.getTimeStampDate()) {
             System.out.println("TimeStamp: " + date_format.format(pkcs7.getTimeStampDate().getTime()));
-            TimeStampToken ts = pkcs7.getTimeStampToken();
-            System.out.println("TimeStamp service: " + ts.getTimeStampInfo().getTsa());
+            TSTInfo ts = ((TSTInfoBC) pkcs7.getTimeStampTokenInfo()).getTstInfo();
+            System.out.println("TimeStamp service: " + ts.getTsa());
             System.out.println("Timestamp verified? " + pkcs7.verifyTimestampImprint());
         }
 

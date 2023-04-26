@@ -1,5 +1,6 @@
 package com.itextpdf.samples.signatures.chapter03;
 
+import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
@@ -69,7 +70,7 @@ public class C3_10_SignWithTSAEvent {
 
             // TimeStampTokenInfo object contains much more information about the timestamp token,
             // like serial number, TST hash algorithm, etc.
-            public void inspectTimeStampTokenInfo(TimeStampTokenInfo info) {
+            public void inspectTimeStampTokenInfo(ITimeStampTokenInfo info) {
                 System.out.println(info.getGenTime());
             }
         });

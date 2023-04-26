@@ -108,14 +108,14 @@ public class C4_09_DeferredSigning {
         public byte[] sign(InputStream is) throws GeneralSecurityException {
             try {
                 PrivateKeySignature signature = new PrivateKeySignature(pk, "SHA256", "BC");
-                String hashAlgorithm = signature.getHashAlgorithm();
+                String digestAlgorithm = signature.getDigestAlgorithmName();
                 BouncyCastleDigest digest = new BouncyCastleDigest();
 
-                PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, digest, false);
-                byte hash[] = DigestAlgorithms.digest(is, digest.getMessageDigest(hashAlgorithm));
+                PdfPKCS7 sgn = new PdfPKCS7(null, chain, digestAlgorithm, null, digest, false);
+                byte hash[] = DigestAlgorithms.digest(is, digest.getMessageDigest(digestAlgorithm));
                 byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, PdfSigner.CryptoStandard.CMS, null, null);
                 byte[] extSignature = signature.sign(sh);
-                sgn.setExternalDigest(extSignature, null, signature.getEncryptionAlgorithm());
+                sgn.setExternalSignatureValue(extSignature, null, signature.getSignatureAlgorithmName());
 
                 return sgn.getEncodedPKCS7(hash, PdfSigner.CryptoStandard.CMS, null, null, null);
             } catch (IOException ioe) {

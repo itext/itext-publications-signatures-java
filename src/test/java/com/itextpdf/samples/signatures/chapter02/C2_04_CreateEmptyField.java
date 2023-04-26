@@ -3,6 +3,7 @@ package com.itextpdf.samples.signatures.chapter02;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
+import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -60,9 +61,9 @@ public class C2_04_CreateEmptyField {
         doc.add(new Paragraph("Hello World!"));
 
         // Create a signature form field
-        PdfFormField field = PdfFormField.createSignature(pdfDoc, new Rectangle(72, 632, 200, 100));
-        field.setFieldName(SIGNAME);
-        field.setPage(1);
+        PdfFormField field = new SignatureFormFieldBuilder(pdfDoc, SIGNAME)
+                .setWidgetRectangle(new Rectangle(72, 632, 200, 100)).createSignature();
+        field.getFirstFormAnnotation().setPage(1);
 
         // Set the widget properties
         field.getWidgets().get(0).setHighlightMode(PdfAnnotation.HIGHLIGHT_INVERT).setFlags(PdfAnnotation.PRINT);
@@ -110,8 +111,8 @@ public class C2_04_CreateEmptyField {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
 
         // Create a signature form field
-        PdfSignatureFormField field = PdfFormField.createSignature(pdfDoc, new Rectangle(72, 632, 200, 100));
-        field.setFieldName(SIGNAME);
+        PdfSignatureFormField field = new SignatureFormFieldBuilder(pdfDoc, SIGNAME)
+                .setWidgetRectangle(new Rectangle(72, 632, 200, 100)).createSignature();
 
         field.getWidgets().get(0).setHighlightMode(PdfAnnotation.HIGHLIGHT_OUTLINE).setFlags(PdfAnnotation.PRINT);
 
