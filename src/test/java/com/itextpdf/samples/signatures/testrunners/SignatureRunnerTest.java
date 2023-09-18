@@ -45,7 +45,7 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
         classAreaMap.put("com.itextpdf.samples.signatures.chapter02.C2_03_SignEmptyField",
                 new ArrayList<Rectangle>(Arrays.asList(new Rectangle(46, 472, 287, 255))));
         classAreaMap.put("com.itextpdf.samples.signatures.chapter02.C2_04_CreateEmptyField",
-                new ArrayList<Rectangle>(Arrays.asList(new Rectangle(72, 632, 200, 100))));
+                new ArrayList<Rectangle>(Arrays.asList(new Rectangle(82, 672, 190, 20))));
         classAreaMap.put("com.itextpdf.samples.signatures.chapter02.C2_05_CustomAppearance",
                 new ArrayList<Rectangle>(Arrays.asList(new Rectangle(46, 472, 287, 255))));
         classAreaMap.put("com.itextpdf.samples.signatures.chapter02.C2_06_SignatureAppearance",

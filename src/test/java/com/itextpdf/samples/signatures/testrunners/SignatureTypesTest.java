@@ -39,8 +39,8 @@ public class SignatureTypesTest extends WrappedSamplesRunner {
     static {
         ignoredAreaMap = new HashMap<>();
         ignoredAreaMap.put(1, new ArrayList<Rectangle>(Arrays.asList(
-                new Rectangle(72, 675, 170, 20),
-                new Rectangle(72, 725, 170, 20))));
+                new Rectangle(70, 690, 170, 20),
+                new Rectangle(70, 740, 170, 20))));
     }
 
     @Parameterized.Parameters(name = "{index}: {0}")
