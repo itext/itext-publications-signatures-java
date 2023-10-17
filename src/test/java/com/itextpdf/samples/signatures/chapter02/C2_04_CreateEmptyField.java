@@ -79,12 +79,6 @@ public class C2_04_CreateEmptyField {
         black.add(new PdfNumber(ColorConstants.BLACK.getColorValue()[2]));
         mkDictionary.put(PdfName.BC, black);
 
-        PdfArray white = new PdfArray();
-        white.add(new PdfNumber(ColorConstants.WHITE.getColorValue()[0]));
-        white.add(new PdfNumber(ColorConstants.WHITE.getColorValue()[1]));
-        white.add(new PdfNumber(ColorConstants.WHITE.getColorValue()[2]));
-        mkDictionary.put(PdfName.BG, white);
-
         field.getWidgets().get(0).setAppearanceCharacteristics(mkDictionary);
 
         PdfAcroForm.getAcroForm(pdfDoc, true).addField(field);
