@@ -50,13 +50,12 @@ public class C4_07_ClientServerSigning {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
+        signer
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
-                .setPageNumber(1);
-        signer.setFieldName("sig");
+                .setPageNumber(1)
+                .setFieldName("sig");
 
         IExternalDigest digest = new BouncyCastleDigest();
         IExternalSignature signature = new ServerSignature();

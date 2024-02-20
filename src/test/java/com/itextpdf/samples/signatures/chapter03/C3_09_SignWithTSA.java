@@ -10,7 +10,6 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.PrivateKeySignature;
@@ -83,17 +82,12 @@ public class C3_09_SignWithTSA {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
+        signer
                 .setReason(reason)
                 .setLocation(location)
-
-                // Specify if the appearance before field is signed will be used
-                // as a background for the signed field. The "false" value is the default value.
-                .setReuseAppearance(false)
                 .setPageRect(rect)
-                .setPageNumber(1);
-        signer.setFieldName("sig");
+                .setPageNumber(1)
+                .setFieldName("sig");
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);

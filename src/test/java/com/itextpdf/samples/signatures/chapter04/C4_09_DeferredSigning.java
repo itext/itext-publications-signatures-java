@@ -11,7 +11,6 @@ import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ExternalBlankSignatureContainer;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfPKCS7;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 
@@ -55,20 +54,18 @@ public class C4_09_DeferredSigning {
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
 
         C4_09_DeferredSigning app = new C4_09_DeferredSigning();
-        app.emptySignature(SRC, TEMP, "sig", chain);
+        app.emptySignature(SRC, TEMP, "sig");
         app.createSignature(TEMP, DEST + RESULT_FILES[0], "sig", pk, chain);
     }
 
-    public void emptySignature(String src, String dest, String fieldname, Certificate[] chain)
+    public void emptySignature(String src, String dest, String fieldname)
             throws IOException, GeneralSecurityException {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
+        signer
                 .setPageRect(new Rectangle(36, 748, 200, 100))
                 .setPageNumber(1)
-                .setCertificate(chain[0]);
-        signer.setFieldName(fieldname);
+                .setFieldName(fieldname);
 
         /* ExternalBlankSignatureContainer constructor will create the PdfDictionary for the signature
          * information and will insert the /Filter and /SubFilter values into this dictionary.

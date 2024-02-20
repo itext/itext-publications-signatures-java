@@ -121,10 +121,8 @@ public class C2_04_CreateEmptyField {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        // Create the signature appearance
-        signer.getSignatureAppearance()
-                .setReason(reason)
-                .setLocation(location);
+        signer.setReason(reason);
+        signer.setLocation(location);
 
         signer.setFieldName(name);
 

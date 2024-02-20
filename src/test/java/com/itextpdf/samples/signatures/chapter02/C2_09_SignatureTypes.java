@@ -15,7 +15,6 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 
@@ -56,14 +55,14 @@ public class C2_09_SignatureTypes {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setReason(reason);
-        appearance.setLocation(location);
+        signer
+            .setReason(reason)
+            .setLocation(location);
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        appearance.setPageRect(rect);
-        appearance.setPageNumber(1);
-        signer.setFieldName("sig");
+        signer.setPageRect(rect)
+                .setPageNumber(1)
+                .setFieldName("sig");
 
         /* Set the document's certification level. This parameter defines if changes are allowed
          * after the applying of the signature.
@@ -122,14 +121,13 @@ public class C2_09_SignatureTypes {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setReason(reason);
-        appearance.setLocation(location);
-        appearance.setReuseAppearance(false);
-        Rectangle rect = new Rectangle(36, 700, 200, 100);
-        appearance.setPageRect(rect);
-        appearance.setPageNumber(1);
         signer.setFieldName("Signature2");
+        signer
+            .setReason(reason)
+            .setLocation(location);
+        Rectangle rect = new Rectangle(36, 700, 200, 100);
+        signer.setPageRect(rect)
+            .setPageNumber(1);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

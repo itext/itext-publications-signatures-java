@@ -43,16 +43,17 @@ public class C2_03_SignEmptyField {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer.getSignatureAppearance()
-                .setReason(reason)
-                .setLocation(location)
-
-                // Specify if the appearance before field is signed will be used
-                // as a background for the signed field. The "false" value is the default value.
-                .setReuseAppearance(false);
+        signer
+            .setReason(reason)
+            .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
         signer.setFieldName(name);
+
+        // Specify if the appearance before field is signed will be used
+        // as a background for the signed field. The "false" value is the default value.
+        signer.getSignatureField().setReuseAppearance(false);
+
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
