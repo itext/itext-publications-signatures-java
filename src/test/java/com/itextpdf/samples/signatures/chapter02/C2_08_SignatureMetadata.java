@@ -8,7 +8,6 @@ import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSignature;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 
@@ -21,8 +20,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -45,10 +42,10 @@ public class C2_08_SignatureMetadata {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance.setReason(reason);
-        appearance.setLocation(location);
-        appearance.setContact(contact);
+        signer
+            .setReason(reason)
+            .setLocation(location)
+            .setContact(contact);
 
         // This name corresponds to the name of the field that already exists in the document.
         signer.setFieldName(name);

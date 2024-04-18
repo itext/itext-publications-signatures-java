@@ -4,7 +4,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.PdfSignatureAppearance;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PrivateKeySignature;
@@ -46,17 +45,12 @@ public class C2_02_SignHelloWorldWithTempFile {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        PdfSignatureAppearance appearance = signer.getSignatureAppearance();
-        appearance
+        signer
                 .setReason(reason)
                 .setLocation(location)
-
-                // Specify if the appearance before field is signed will be used
-                // as a background for the signed field. The "false" value is the default value.
-                .setReuseAppearance(false)
                 .setPageRect(rect)
-                .setPageNumber(1);
-        signer.setFieldName("sig");
+                .setPageNumber(1)
+                .setFieldName("sig");
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
