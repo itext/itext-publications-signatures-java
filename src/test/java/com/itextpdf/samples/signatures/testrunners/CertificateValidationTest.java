@@ -7,13 +7,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import org.junit.Test;
-import org.junit.runners.Parameterized;
 
 public class CertificateValidationTest extends WrappedSamplesRunner {
     private ByteArrayOutputStream output = new ByteArrayOutputStream();;
-    @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
         searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter05.C5_03_CertificateValidation");
@@ -21,8 +22,11 @@ public class CertificateValidationTest extends WrappedSamplesRunner {
         return generateTestsList(searchConfig);
     }
 
-    @Test(timeout = 60000)
-    public void test() throws Exception {
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 60000)
+    @ParameterizedTest(name = "{index}: {0}")
+    @MethodSource("data")
+    public void test(RunnerParams data) throws Exception {
+        this.sampleClassParams = data;
         runSamples();
     }
 

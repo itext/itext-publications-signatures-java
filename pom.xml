@@ -11,9 +11,7 @@
     <licensekey.version>4.1.5-SNAPSHOT</licensekey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <typography.version>4.0.3-SNAPSHOT</typography.version>
-    <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
   <repositories>
     <repository>
@@ -99,7 +97,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M3</version>
         <configuration>
-          <groups>${unittests}</groups>
+          <groups>UnitTest,BouncyCastleUnitTest</groups>
           <argLine>${env.SUREFIRE_OPTS}</argLine>
         </configuration>
       </plugin>
@@ -119,7 +117,7 @@
           <includes>
             <include>**/*.java</include>
           </includes>
-          <groups>${sampletests}</groups>
+          <groups>SampleTest</groups>
           <argLine>${env.SUREFIRE_OPTS}</argLine>
         </configuration>
       </plugin>

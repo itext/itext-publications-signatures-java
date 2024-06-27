@@ -2,18 +2,19 @@ package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
-import com.itextpdf.test.annotations.type.SampleTest;
 
 import java.io.UnsupportedEncodingException;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runners.Parameterized;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@Category(SampleTest.class)
+@Tag("SampleTest")
 public class EncryptDecryptTest extends WrappedSamplesRunner {
     private PrintStream oldSysOut;
     private ByteArrayOutputStream output;
@@ -37,7 +38,6 @@ public class EncryptDecryptTest extends WrappedSamplesRunner {
             "Now you need the public key to decrypt it\n" +
             "secret message\n";
 
-    @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
         searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter01.C1_03_EncryptDecrypt");
@@ -45,8 +45,11 @@ public class EncryptDecryptTest extends WrappedSamplesRunner {
         return generateTestsList(searchConfig);
     }
 
-    @Test(timeout = 60000)
-    public void test() throws Exception {
+    @Timeout(unit = TimeUnit.MILLISECONDS, value = 60000)
+    @ParameterizedTest(name = "{index}: {0}")
+    @MethodSource("data")
+    public void test(RunnerParams data) throws Exception {
+        this.sampleClassParams = data;
         setupSystemOutput();
 
         runSamples();
