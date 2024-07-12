@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.samples</groupId>
   <artifactId>signatures</artifactId>
-  <version>8.0.4</version>
+  <version>8.0.5</version>
   <name>iText Publications: Signatures</name>
   <url>http://itextpdf.com/</url>
   <properties>
@@ -11,9 +11,7 @@
     <licensekey.version>4.1.4</licensekey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sampletests>com.itextpdf.test.annotations.type.SampleTest</sampletests>
     <typography.version>4.0.2</typography.version>
-    <unittests>com.itextpdf.test.annotations.type.UnitTest</unittests>
   </properties>
   <repositories>
     <repository>
@@ -99,7 +97,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M3</version>
         <configuration>
-          <groups>${unittests}</groups>
+          <groups>UnitTest,BouncyCastleUnitTest</groups>
           <argLine>${env.SUREFIRE_OPTS}</argLine>
         </configuration>
       </plugin>
@@ -119,7 +117,7 @@
           <includes>
             <include>**/*.java</include>
           </includes>
-          <groups>${sampletests}</groups>
+          <groups>SampleTest</groups>
           <argLine>${env.SUREFIRE_OPTS}</argLine>
         </configuration>
       </plugin>
