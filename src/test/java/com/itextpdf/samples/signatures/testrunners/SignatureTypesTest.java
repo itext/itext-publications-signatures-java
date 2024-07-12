@@ -26,8 +26,34 @@ public class SignatureTypesTest extends WrappedSamplesRunner {
     private static final Map<Integer, List<Rectangle>> ignoredAreaMap;
 
     private static final String EXPECTED_ERROR_TEXT =
-            "\n./target/signatures/chapter02/hello_level_1_annotated_wrong.pdf:"
-                    + "\n\"sig\" signature integrity is invalid\n\n";
+            "\n./target/signatures/chapter02/hello_level_3_annotated.pdf:\n" +
+                    "Document signatures validation failed!\n\n" +
+                    "ReportItem{checkName='DocMDP check.', message='Page annotations were unexpectedly modified.', " +
+                    "cause=null, status=INVALID}\n" +
+                    "\n./target/signatures/chapter02/hello_level_4_annotated.pdf:\n" +
+                    "Document signatures validation failed!\n\n" +
+                    "ReportItem{checkName='DocMDP check.', message='Page annotations were unexpectedly modified.', " +
+                    "cause=null, status=INVALID}\n" +
+                    "\n./target/signatures/chapter02/hello_level_1_annotated_wrong.pdf:\n" +
+                    "Document signatures validation failed!\n\n" +
+                    "ReportItem{checkName='DocMDP check.', message='Not possible to identify document revision " +
+                    "corresponding to the first signature in the document.', cause=null, status=INVALID}\n\n" +
+                    "ReportItem{checkName='Signature verification check.', message='Unexpected exception occurred " +
+                    "during document revisions retrieval.', cause=com.itextpdf.io.exceptions.IOException: " +
+                    "PDF startxref not found., status=INDETERMINATE}\n" +
+                    "\n./target/signatures/chapter02/hello_level_1_text.pdf:\n" +
+                    "Document signatures validation failed!\n\n" +
+                    "ReportItem{checkName='DocMDP check.', message='Page was unexpectedly modified.', " +
+                    "cause=null, status=INVALID}\n" +
+                    "\n./target/signatures/chapter02/hello_level_4_double.pdf:\n" +
+                    "Document signatures validation failed!\n\n" +
+                    "ReportItem{checkName='DocMDP check.', message='New PDF document revision contains " +
+                    "unexpected form field \"Signature2\".', cause=null, status=INVALID}\n\n" +
+                    "ReportItem{checkName='DocMDP check.', message='PDF document AcroForm contains changes " +
+                    "other than document timestamp (docMDP level >= 1), " +
+                    "form fill-in and digital signatures (docMDP level >= 2), " +
+                    "adding or editing annotations (docMDP level 3), which are not allowed.', " +
+                    "cause=null, status=INVALID}\n";
 
     static {
         ignoredAreaMap = new HashMap<>();
@@ -59,13 +85,6 @@ public class SignatureTypesTest extends WrappedSamplesRunner {
             String currentDest = dest + resultFiles[i];
             String currentCmp = cmp + resultFiles[i];
             try {
-
-                /* iText doesn't recognize invalidated signatures in "hello_level_3_annotated.pdf",
-                 * "hello_level_4_annotated.pdf", "hello_level_1_text.pdf", "hello_level_4_double.pdf"
-                 * files, because we don't check changes in new revisions against old signatures
-                 * (permissions, certifications, content changes),
-                 * however signatures themselves are not broken.
-                 */
                 String result = new SignatureTestHelper()
                         .checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap);
 
@@ -74,14 +93,15 @@ public class SignatureTypesTest extends WrappedSamplesRunner {
                 }
 
             } catch (InterruptedException | IOException | GeneralSecurityException exc) {
-                errorTemp.append("Exception has been thrown: ").append(exc.getMessage());
+                errorTemp.append("Exception has been thrown: ").append(exc.getMessage()).append('\n');
             }
         }
 
         String errorText = errorTemp.toString();
-        if (errorText.equals("") || !errorText.contains(EXPECTED_ERROR_TEXT)) {
-            errorText += "\n'hello_level_1_annotated_wrong.pdf' file's signature "
-                    + "was expected to be invalid.\n\n";
+        if (!errorText.contains(EXPECTED_ERROR_TEXT)) {
+            errorText += "\n'hello_level_3_annotated.pdf', 'hello_level_4_annotated.pdf', " +
+                    "'hello_level_1_annotated_wrong.pdf', 'hello_level_1_text.pdf' and 'hello_level_4_double.pdf' " +
+                    "files' signatures are expected to be invalid.\n\n";
         } else {
 
             // Expected error should be ignored

@@ -60,7 +60,8 @@ public class C4_01_SignWithPKCS11HSM {
         BouncyCastleProvider providerBC = new BouncyCastleProvider();
         Security.addProvider(providerBC);
         FileInputStream fis = new FileInputStream(pkcs11cfg);
-        Provider providerPKCS11 = new SunPKCS11(fis);
+        Provider providerPKCS11 = new SunPKCS11();
+        providerPKCS11.load(fis);
         Security.addProvider(providerPKCS11);
 
         KeyStore ks = KeyStore.getInstance("PKCS11");
@@ -68,7 +69,7 @@ public class C4_01_SignWithPKCS11HSM {
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, pass);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
         ITSAClient tsaClient = null;
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];

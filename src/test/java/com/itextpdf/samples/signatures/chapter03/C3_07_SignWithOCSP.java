@@ -60,7 +60,7 @@ public class C3_07_SignWithOCSP {
          * In the current sample it is not needed to verify the OCSP response,
          * that is why null is passed as verifier parameter.
          */
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
 
         new C3_07_SignWithOCSP().sign(SRC, DEST + RESULT_FILES[0], chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),

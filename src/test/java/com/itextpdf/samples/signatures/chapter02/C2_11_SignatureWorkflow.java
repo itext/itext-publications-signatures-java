@@ -38,13 +38,12 @@ public class C2_11_SignatureWorkflow {
     public static final String DEST = "./target/signatures/chapter02/";
     public static final String FORM = "./target/signatures/chapter02/form.pdf";
 
-    public static final String ALICE = "./src/test/resources/encryption/alice";
-    public static final String BOB = "./src/test/resources/encryption/bob";
-    public static final String CAROL = "./src/test/resources/encryption/carol";
-    public static final String DAVE = "./src/test/resources/encryption/dave";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String ALICE = "./src/test/resources/encryption/alice.p12";
+    public static final String BOB = "./src/test/resources/encryption/bob.p12";
+    public static final String CAROL = "./src/test/resources/encryption/carol.p12";
+    public static final String DAVE = "./src/test/resources/encryption/dave.p12";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "step1_signed_by_alice.pdf", "step2_signed_by_alice_and_filled_out_by_bob.pdf",
@@ -107,7 +106,7 @@ public class C2_11_SignatureWorkflow {
 
     public void certify(String keystore, String provider, String src, String name, String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -133,14 +132,13 @@ public class C2_11_SignatureWorkflow {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
         form.getField(name).setValue(value);
-        form.getField(name).setReadOnly(true);
 
         pdfDoc.close();
     }
 
     public void sign(String keystore, String provider, String src, String name, String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -158,7 +156,7 @@ public class C2_11_SignatureWorkflow {
     public void fillOutAndSign(String keystore, String provider, String src, String name, String fname, String value,
             String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -170,7 +168,6 @@ public class C2_11_SignatureWorkflow {
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(signer.getDocument(), true);
         form.getField(fname).setValue(value);
-        form.getField(fname).setReadOnly(true);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider);
         IExternalDigest digest = new BouncyCastleDigest();

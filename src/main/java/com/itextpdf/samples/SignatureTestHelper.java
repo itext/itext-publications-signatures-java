@@ -1,50 +1,32 @@
 package com.itextpdf.samples;
 
 import com.itextpdf.bouncycastle.asn1.tsp.TSTInfoBC;
-import com.itextpdf.bouncycastle.cert.ocsp.BasicOCSPRespBC;
-import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfDictionary;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.signatures.CRLVerifier;
-import com.itextpdf.signatures.CertificateVerification;
-import com.itextpdf.signatures.OCSPVerifier;
-import com.itextpdf.signatures.PdfPKCS7;
-import com.itextpdf.signatures.SignaturePermissions;
-import com.itextpdf.signatures.SignatureUtil;
-import com.itextpdf.signatures.TimestampConstants;
-import com.itextpdf.signatures.VerificationException;
-import com.itextpdf.signatures.VerificationOK;
+import com.itextpdf.signatures.*;
+import com.itextpdf.signatures.validation.v1.SignatureValidationProperties;
+import com.itextpdf.signatures.validation.v1.SignatureValidator;
+import com.itextpdf.signatures.validation.v1.ValidatorChainBuilder;
+import com.itextpdf.signatures.validation.v1.report.ReportItem;
+import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.test.ITextTest;
+import org.bouncycastle.asn1.tsp.TSTInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Security;
-import java.security.cert.CRL;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.bouncycastle.asn1.tsp.TSTInfo;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Due to import control restrictions by the governments of a few countries,
@@ -89,119 +71,47 @@ public class SignatureTestHelper {
     }
 
     /**
-     * In this method we add trusted certificates.
+     * In this method we add trusted certificates to the IssuingCertificateRetriever.
      * If document signatures certificates doesn't contain certificates that are added in this method, verification will fail.
      * NOTE: Override this method to add additional certificates.
      */
-    protected void initKeyStoreForVerification(KeyStore ks) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-        ks.load(null, null);
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        Certificate adobeCert = cf.generateCertificate(new FileInputStream(ADOBE));
-        Certificate cacertCert = cf.generateCertificate(new FileInputStream(CACERT));
-        Certificate brunoCert = cf.generateCertificate(new FileInputStream(BRUNO));
-        ks.setCertificateEntry("adobe", adobeCert);
-        ks.setCertificateEntry("cacert", cacertCert);
-        ks.setCertificateEntry("bruno", brunoCert);
+    protected void addTrustedCertificates(IssuingCertificateRetriever certificateRetriever, List<Certificate> certs)
+            throws CertificateException, IOException {
+        certificateRetriever.addTrustedCertificates(certs);
     }
 
-    protected static Certificate loadCertificateFromKeyStore(String keystorePath, char[] ksPass) {
-        try {
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(new FileInputStream(keystorePath), ksPass);
-            String alias = ks.aliases().nextElement();
-            return ks.getCertificate(alias);
-        } catch (Exception e) {
-            // ignored
-        }
-        return null;
-    }
-
-    private void verifySignaturesForDocument(String documentPath)
-            throws IOException, GeneralSecurityException {
+    private void verifySignaturesForDocument(String documentPath) throws IOException, CertificateException {
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
 
-        PdfReader reader = new PdfReader(documentPath);
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(documentPath));
-        SignatureUtil signUtil = new SignatureUtil(pdfDoc);
-        List<String> names = signUtil.getSignatureNames();
+        // Set up the validator.
+        SignatureValidationProperties properties = new SignatureValidationProperties();
 
-        verifySignatures(signUtil, names);
-        reader.close();
-    }
+        IssuingCertificateRetriever certificateRetriever = new IssuingCertificateRetriever();
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        Certificate adobeCert = cf.generateCertificate(new FileInputStream(ADOBE));
+        Certificate caCert = cf.generateCertificate(new FileInputStream(CACERT));
+        Certificate brunoCert = cf.generateCertificate(new FileInputStream(BRUNO));
+        addTrustedCertificates(certificateRetriever, Arrays.asList(adobeCert, caCert, brunoCert));
 
-    private void verifySignatures(SignatureUtil signUtil, List<String> names) throws IOException, GeneralSecurityException {
-        for (String name : names) {
-            PdfPKCS7 pkcs7 = signUtil.readSignatureData(name);
+        ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
+                .withIssuingCertificateRetriever(certificateRetriever)
+                .withSignatureValidationProperties(properties);
 
-            // verify signature integrity
-            if (!pkcs7.verifySignatureIntegrityAndAuthenticity()) {
-                addError(String.format("\"%s\" signature integrity is invalid\n", name));
-            }
+        ValidationReport report;
+        try (PdfDocument document = new PdfDocument(new PdfReader(documentPath))) {
+            SignatureValidator validator = validatorChainBuilder.buildSignatureValidator(document);
 
-            verifyCertificates(pkcs7);
-        }
-    }
-
-    private void verifyCertificates(PdfPKCS7 pkcs7) throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-
-        initKeyStoreForVerification(ks);
-
-        Certificate[] certs = pkcs7.getSignCertificateChain();
-        Calendar cal = pkcs7.getSignDate();
-        List<VerificationException> errors = CertificateVerification.verifyCertificates(certs, ks, cal);
-        if (!errors.isEmpty()) {
-            for (VerificationException e : errors) {
-                addError(e.getMessage() + "\n");
+            // Validate all signatures in the document.
+            report = validator.validateSignatures();
+            if (report.getValidationResult() != ValidationReport.ValidationResult.VALID) {
+                addError("Document signatures validation failed!");
+                for (ReportItem error : report.getFailures()) {
+                    addError(error.toString());
+                }
             }
         }
-        for (int i = 0; i < certs.length; i++) {
-            X509Certificate cert = (X509Certificate) certs[i];
-            checkCertificateInfo(cert, cal.getTime(), pkcs7);
-        }
 
-        X509Certificate signCert = (X509Certificate)certs[0];
-        X509Certificate issuerCert = (certs.length > 1 ? (X509Certificate)certs[1] : null);
-
-        //Checking validity of the document at the time of signing
-        checkRevocation(pkcs7, signCert, issuerCert, cal.getTime());
-    }
-
-    private void checkCertificateInfo(X509Certificate cert, Date signDate, PdfPKCS7 pkcs7) throws GeneralSecurityException {
-        try {
-            cert.checkValidity(signDate);
-        } catch (CertificateExpiredException e) {
-            addError("The certificate was expired at the time of signing.");
-        } catch (CertificateNotYetValidException e) {
-            addError("The certificate wasn't valid yet at the time of signing.");
-        }
-
-        if (TimestampConstants.UNDEFINED_TIMESTAMP_DATE != pkcs7.getTimeStampDate()) {
-            if (!pkcs7.verifyTimestampImprint()) {
-                addError("Timestamp is invalid.");
-            }
-        }
-    }
-
-    private void checkRevocation(PdfPKCS7 pkcs7, X509Certificate signCert, X509Certificate issuerCert, Date date) throws GeneralSecurityException, IOException {
-        List<IBasicOCSPResp> ocsps = new ArrayList<>();
-        if (pkcs7.getOcsp() != null)
-            ocsps.add(new BasicOCSPRespBC(((BasicOCSPRespBC) pkcs7.getOcsp()).getBasicOCSPResp()));
-        OCSPVerifier ocspVerifier = new OCSPVerifier(null, ocsps);
-        List<VerificationOK> verification =
-                ocspVerifier.verify(signCert, issuerCert, date);
-        if (verification.size() == 0) {
-            List<X509CRL> crls = new ArrayList<X509CRL>();
-            if (pkcs7.getCRLs() != null) {
-                for (CRL crl : pkcs7.getCRLs())
-                    crls.add((X509CRL)crl);
-            }
-            CRLVerifier crlVerifier = new CRLVerifier(null, crls);
-            verification.addAll(crlVerifier.verify(signCert, issuerCert, date));
-        }
-
-        //if exception was not thrown document is not revoked or it couldn't be verified
     }
 
     protected void compareSignatures(String outFile, String cmpFile) throws IOException {
@@ -222,7 +132,7 @@ public class SignatureTestHelper {
         docInfo.setNumberOfTotalRevisions(signUtil.getTotalRevisions());
         SignaturePermissions perms = null;
 
-        List<SignatureInfo> signInfos = new ArrayList<SignatureInfo>();
+        List<SignatureInfo> signInfos = new ArrayList<>();
         for (String name : names) {
             SignatureInfo sigInfo = new SignatureInfo();
             sigInfo.setSignatureName(name);
@@ -267,16 +177,16 @@ public class SignatureTestHelper {
             sigInfo.setIsFieldsFillAllowed(perms.isFillInAllowed());
             sigInfo.setIsAddingAnnotationsAllowed(perms.isAnnotationsAllowed());
 
-            List<String> fieldLocks = new ArrayList<String>();
+            List<String> fieldLocks = new ArrayList<>();
             for (SignaturePermissions.FieldLock lock : perms.getFieldLocks()) {
                 fieldLocks.add(lock.toString());
             }
             sigInfo.setFieldsLocks(fieldLocks);
 
             Certificate[] certs = pkcs7.getSignCertificateChain();
-            List<CertificateInfo> certInfos = new ArrayList<CertificateInfo>();
-            for (int i = 0; i < certs.length; i++) {
-                X509Certificate cert = (X509Certificate) certs[i];
+            List<CertificateInfo> certInfos = new ArrayList<>();
+            for (Certificate certificate : certs) {
+                X509Certificate cert = (X509Certificate) certificate;
                 CertificateInfo certInfo = new CertificateInfo();
                 certInfo.setIssuer(cert.getIssuerDN());
                 certInfo.setSubject(cert.getSubjectDN());

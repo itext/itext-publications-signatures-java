@@ -32,9 +32,9 @@ public class C4_09_DeferredSigning {
 
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
     public static final String TEMP = "./target/signatures/chapter04/hello_empty_sig.pdf";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "hello_sig_ok.pdf"
@@ -47,7 +47,7 @@ public class C4_09_DeferredSigning {
         BouncyCastleProvider providerBC = new BouncyCastleProvider();
         Security.addProvider(providerBC);
 
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", providerBC.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         Certificate[] chain = ks.getCertificateChain(alias);

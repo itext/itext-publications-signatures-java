@@ -60,7 +60,8 @@ public class C4_03_SignWithPKCS11SC {
                     "library=" + dllPath + "\n" +
                     "slotListIndex = " + slots[0];
             ByteArrayInputStream bais = new ByteArrayInputStream(config.getBytes());
-            Provider providerPKCS11 = new SunPKCS11(bais);
+            Provider providerPKCS11 = new SunPKCS11();
+            providerPKCS11.load(bais);
             Security.addProvider(providerPKCS11);
             BouncyCastleProvider providerBC = new BouncyCastleProvider();
             Security.addProvider(providerBC);
@@ -86,7 +87,7 @@ public class C4_03_SignWithPKCS11SC {
             throws GeneralSecurityException, IOException {
         PrivateKey pk = (PrivateKey) ks.getKey(alias, null);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
         List<ICrlClient> crlList = new ArrayList<ICrlClient>();
         crlList.add(new CrlClientOnline(chain));
 

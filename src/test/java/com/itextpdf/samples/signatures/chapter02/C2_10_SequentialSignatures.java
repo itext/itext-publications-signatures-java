@@ -38,12 +38,11 @@ public class C2_10_SequentialSignatures {
     public static final String DEST = "./target/signatures/chapter02/";
     public static final String FORM = "./target/signatures/chapter02/multiple_signatures.pdf";
 
-    public static final String ALICE = "./src/test/resources/encryption/alice";
-    public static final String BOB = "./src/test/resources/encryption/bob";
-    public static final String CAROL = "./src/test/resources/encryption/carol";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String ALICE = "./src/test/resources/encryption/alice.p12";
+    public static final String BOB = "./src/test/resources/encryption/bob.p12";
+    public static final String CAROL = "./src/test/resources/encryption/carol.p12";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "signed_by_alice.pdf", "signed_by_bob.pdf",
@@ -79,7 +78,7 @@ public class C2_10_SequentialSignatures {
 
     public void sign(String keystore, String provider, int level, String src, String name, String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);

@@ -2,33 +2,33 @@ package com.itextpdf.samples.signatures.testrunners;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.samples.SignatureTestHelper;
-import com.itextpdf.samples.signatures.chapter02.C2_11_SignatureWorkflow;
+import com.itextpdf.signatures.IssuingCertificateRetriever;
 import com.itextpdf.test.RunnerSearchConfig;
 import com.itextpdf.test.WrappedSamplesRunner;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.security.GeneralSecurityException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 @Tag("SampleTest")
 public class SignatureWorkflowTest extends WrappedSamplesRunner {
     private static final Map<Integer, List<Rectangle>> ignoredAreaMap;
+
+    private static final String ALICE = "./src/test/resources/encryption/alice.crt";
+    private static final String BOB = "./src/test/resources/encryption/bob.crt";
+    private static final String CAROL = "./src/test/resources/encryption/carol.crt";
+    private static final String DAVE = "./src/test/resources/encryption/dave.crt";
 
     static {
         ignoredAreaMap = new HashMap<>();
@@ -60,17 +60,17 @@ public class SignatureWorkflowTest extends WrappedSamplesRunner {
             try {
                 addError(new SignatureTestHelper() {
                     @Override
-                    protected void initKeyStoreForVerification(KeyStore ks)
-                            throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException {
-                        super.initKeyStoreForVerification(ks);
-                        ks.setCertificateEntry("alice", loadCertificateFromKeyStore(C2_11_SignatureWorkflow.ALICE,
-                                C2_11_SignatureWorkflow.PASSWORD));
-                        ks.setCertificateEntry("bob", loadCertificateFromKeyStore(C2_11_SignatureWorkflow.BOB,
-                                C2_11_SignatureWorkflow.PASSWORD));
-                        ks.setCertificateEntry("carol", loadCertificateFromKeyStore(C2_11_SignatureWorkflow.CAROL,
-                                C2_11_SignatureWorkflow.PASSWORD));
-                        ks.setCertificateEntry("dave", loadCertificateFromKeyStore(C2_11_SignatureWorkflow.DAVE,
-                                C2_11_SignatureWorkflow.PASSWORD));
+                    protected void addTrustedCertificates(IssuingCertificateRetriever certificateRetriever,
+                                                          List<Certificate> certs)
+                            throws CertificateException, IOException {
+                        super.addTrustedCertificates(certificateRetriever, certs);
+                        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+                        Certificate aliceCert = cf.generateCertificate(new FileInputStream(ALICE));
+                        Certificate bobCert = cf.generateCertificate(new FileInputStream(BOB));
+                        Certificate carolCert = cf.generateCertificate(new FileInputStream(CAROL));
+                        Certificate daveCert = cf.generateCertificate(new FileInputStream(DAVE));
+                        certificateRetriever.addTrustedCertificates(
+                                Arrays.asList(aliceCert, bobCert, carolCert, daveCert));
                     }
                 }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap));
             } catch (InterruptedException | IOException | GeneralSecurityException exc) {

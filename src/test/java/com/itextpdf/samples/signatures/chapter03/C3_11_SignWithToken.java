@@ -67,7 +67,7 @@ public class C3_11_SignWithToken {
         String alias = "Bruno Lowagie";
         PrivateKey pk = (PrivateKey) ks.getKey(alias, null);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
         ITSAClient tsaClient = null;
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];

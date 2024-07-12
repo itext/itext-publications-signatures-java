@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-
 public class CertificateValidationTest extends WrappedSamplesRunner {
-    private ByteArrayOutputStream output = new ByteArrayOutputStream();;
+    private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
     public static Collection<Object[]> data() {
         RunnerSearchConfig searchConfig = new RunnerSearchConfig();
         searchConfig.addClassToRunnerSearchPath("com.itextpdf.samples.signatures.chapter05.C5_03_CertificateValidation");
@@ -55,14 +55,11 @@ public class CertificateValidationTest extends WrappedSamplesRunner {
     private void setSampleOutStream(Class<?> c) {
         try {
             Field field = c.getDeclaredField("OUT_STREAM");
-            if (field == null) {
-                return;
-            }
 
             boolean access = field.isAccessible();
             field.setAccessible(true);
             Object obj = field.get(null);
-            if (obj == null || !(obj instanceof PrintStream)) {
+            if (!(obj instanceof PrintStream)) {
                 return;
             }
 

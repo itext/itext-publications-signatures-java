@@ -59,7 +59,7 @@ public class C3_09_SignWithTSA {
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, pass);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
 
         /* Create an instance of TSAClientBouncyCastle, an implementation of TSAClient.
          * Pass the timestamp authority server url.

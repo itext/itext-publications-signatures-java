@@ -69,7 +69,8 @@ public class C4_02_SignWithPKCS11USB {
                     "library=" + dllPath + "\n" +
                     "slotListIndex = " + slots[0];
             ByteArrayInputStream bais = new ByteArrayInputStream(config.getBytes());
-            Provider providerPKCS11 = new SunPKCS11(bais);
+            Provider providerPKCS11 = new SunPKCS11();
+            providerPKCS11.load(bais);
             Security.addProvider(providerPKCS11);
             BouncyCastleProvider providerBC = new BouncyCastleProvider();
             Security.addProvider(providerBC);
@@ -79,7 +80,7 @@ public class C4_02_SignWithPKCS11USB {
             String alias = ks.aliases().nextElement();
             PrivateKey pk = (PrivateKey) ks.getKey(alias, pass);
             Certificate[] chain = ks.getCertificateChain(alias);
-            IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+            IOcspClient ocspClient = new OcspClientBouncyCastle();
             ITSAClient tsaClient = null;
             for (int i = 0; i < chain.length; i++) {
                 X509Certificate cert = (X509Certificate) chain[i];
