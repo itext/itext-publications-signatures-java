@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.samples</groupId>
   <artifactId>signatures</artifactId>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <name>iText Publications: Signatures</name>
   <url>http://itextpdf.com/</url>
   <properties>
