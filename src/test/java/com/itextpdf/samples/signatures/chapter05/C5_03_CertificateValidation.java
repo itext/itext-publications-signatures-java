@@ -61,7 +61,7 @@ public class C5_03_CertificateValidation {
         certificateRetriever.addTrustedCertificates(Collections.singleton(rootCert));
 
         ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever)
                 .withSignatureValidationProperties(properties);
 
         ValidationReport report;

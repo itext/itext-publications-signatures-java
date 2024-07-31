@@ -95,7 +95,7 @@ public class SignatureTestHelper {
         addTrustedCertificates(certificateRetriever, Arrays.asList(adobeCert, caCert, brunoCert));
 
         ValidatorChainBuilder validatorChainBuilder = new ValidatorChainBuilder()
-                .withIssuingCertificateRetriever(certificateRetriever)
+                .withIssuingCertificateRetrieverFactory(() -> certificateRetriever)
                 .withSignatureValidationProperties(properties);
 
         ValidationReport report;
