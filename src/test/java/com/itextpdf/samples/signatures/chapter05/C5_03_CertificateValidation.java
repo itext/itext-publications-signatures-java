@@ -3,10 +3,10 @@ package com.itextpdf.samples.signatures.chapter05;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.IssuingCertificateRetriever;
-import com.itextpdf.signatures.validation.v1.SignatureValidationProperties;
-import com.itextpdf.signatures.validation.v1.SignatureValidator;
-import com.itextpdf.signatures.validation.v1.ValidatorChainBuilder;
-import com.itextpdf.signatures.validation.v1.report.ValidationReport;
+import com.itextpdf.signatures.validation.SignatureValidationProperties;
+import com.itextpdf.signatures.validation.SignatureValidator;
+import com.itextpdf.signatures.validation.ValidatorChainBuilder;
+import com.itextpdf.signatures.validation.report.ValidationReport;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.FileInputStream;
