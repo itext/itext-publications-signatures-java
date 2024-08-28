@@ -9,6 +9,7 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.SignerProperties;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -45,12 +46,13 @@ public class C2_02_SignHelloWorldWithTempFile {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProps = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProps);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

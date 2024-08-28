@@ -10,6 +10,7 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,13 +43,15 @@ public class C2_08_SignatureMetadata {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location)
             .setContact(contact);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
+
+        signer.setSignerProperties(signerProps);
 
         // Set the signature event to allow modification of the signature dictionary.
         signer.setSignatureEvent(

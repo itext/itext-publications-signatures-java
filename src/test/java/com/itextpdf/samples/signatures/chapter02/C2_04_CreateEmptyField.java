@@ -27,6 +27,7 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
@@ -121,10 +122,11 @@ public class C2_04_CreateEmptyField {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        signer.setReason(reason);
-        signer.setLocation(location);
-
-        signer.setFieldName(name);
+        SignerProperties signerProperties = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location)
+                .setFieldName(name);
+        signer.setSignerProperties(signerProperties);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

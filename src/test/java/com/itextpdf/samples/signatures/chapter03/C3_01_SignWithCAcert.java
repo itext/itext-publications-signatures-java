@@ -12,6 +12,7 @@ import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.ITSAClient;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,15 +47,16 @@ public class C3_01_SignWithCAcert {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer.setFieldName("sig");
-        signer
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("sig")
                 .setReason(reason)
                 .setLocation(location)
                 // Specify if the appearance before field is signed will be used
                 // as a background for the signed field. The "false" value is the default value.
                 .setPageRect(rect)
-                .setPageNumber(1)
-                .getSignatureField().setReuseAppearance(false);
+                .setPageNumber(1);
+        signer.setSignerProperties(signerProperties);
+        signer.getSignatureField().setReuseAppearance(false);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

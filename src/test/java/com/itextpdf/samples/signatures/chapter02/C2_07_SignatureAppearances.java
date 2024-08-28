@@ -10,6 +10,7 @@ import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,17 +49,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Only description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        // Only description is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent("Signed by iText");
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -74,17 +76,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Name and description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        // Name and description is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent("", "Signed by iText");
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -101,17 +104,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Graphic and description is rendered
+        // Graphic and description is rendered
         SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1");
         appearance.setContent("Signed by iText", image);
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -128,17 +132,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Graphic is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1");
+        // Graphic is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent(image);
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

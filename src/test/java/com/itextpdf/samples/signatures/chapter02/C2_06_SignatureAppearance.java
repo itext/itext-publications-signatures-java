@@ -26,6 +26,7 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -62,18 +63,19 @@ public class C2_06_SignatureAppearance {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
         // Set the custom text and a custom font
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent("This document was signed by Bruno Specimen");
         appearance.setFont(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN));
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -88,10 +90,10 @@ public class C2_06_SignatureAppearance {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        signer
-            .setReason(reason)
-            .setLocation(location);
-        signer.setFieldName(name);
+        SignerProperties signerProps = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location)
+                .setFieldName(name);
 
         // Creating the appearance for layer 2
         // Set custom text, custom font, and right-to-left writing.
@@ -100,9 +102,10 @@ public class C2_06_SignatureAppearance {
         text.setFont(PdfFontFactory.createFont("./src/test/resources/font/NotoNaskhArabic-Regular.ttf",
                 PdfEncodings.IDENTITY_H, EmbeddingStrategy.PREFER_EMBEDDED));
         text.setBaseDirection(BaseDirection.RIGHT_TO_LEFT);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent(new Div().add(new Paragraph(text).setTextAlignment(TextAlignment.RIGHT)));
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -115,14 +118,14 @@ public class C2_06_SignatureAppearance {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        signer
-            .setReason(reason)
-            .setLocation(location)
-            .setFieldName(name);
+        SignerProperties signerProps = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location)
+                .setFieldName(name);
 
         // Set a custom text and a background image
         ImageData imageData = ImageDataFactory.create(IMG);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent("This document was signed by Bruno Specimen");
         BackgroundSize size = new BackgroundSize();
         size.setBackgroundSizeToValues(UnitValue.createPointValue(imageData.getWidth()),
@@ -135,7 +138,8 @@ public class C2_06_SignatureAppearance {
                 .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeat.BackgroundRepeatValue.NO_REPEAT))
                 .setBackgroundPosition(backgroundPosition)
                 .setBackgroundSize(size).build());
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -148,13 +152,13 @@ public class C2_06_SignatureAppearance {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        signer
-            .setReason(reason)
-            .setLocation(location);
-        signer.setFieldName(name);
+        SignerProperties signerProps = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location)
+                .setFieldName(name);
 
         // Set a custom text and a scaled background image
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
         appearance.setContent("This document was signed by Bruno Specimen");
         BackgroundSize backgroundSize = new BackgroundSize();
         backgroundSize.setBackgroundSizeToContain();
@@ -165,7 +169,8 @@ public class C2_06_SignatureAppearance {
                 .setImage(new PdfImageXObject(ImageDataFactory.create(IMG)))
                 .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeat.BackgroundRepeatValue.NO_REPEAT))
                 .setBackgroundPosition(backgroundPosition).setBackgroundSize(backgroundSize).build());
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

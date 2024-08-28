@@ -8,6 +8,7 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,17 +44,18 @@ public class C2_03_SignEmptyField {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
-            .setReason(reason)
-            .setLocation(location);
+        SignerProperties signerProperties = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProperties.setFieldName(name);
+
+        signer.setSignerProperties(signerProperties);
 
         // Specify if the appearance before field is signed will be used
         // as a background for the signed field. The "false" value is the default value.
         signer.getSignatureField().setReuseAppearance(false);
-
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

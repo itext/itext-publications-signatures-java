@@ -13,6 +13,7 @@ import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,10 +63,11 @@ public class C4_09_DeferredSigning {
             throws IOException, GeneralSecurityException {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
-        signer
+        SignerProperties signerProperties = new SignerProperties()
                 .setPageRect(new Rectangle(36, 748, 200, 100))
                 .setPageNumber(1)
                 .setFieldName(fieldname);
+        signer.setSignerProperties(signerProperties);
 
         /* ExternalBlankSignatureContainer constructor will create the PdfDictionary for the signature
          * information and will insert the /Filter and /SubFilter values into this dictionary.

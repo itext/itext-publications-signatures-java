@@ -14,6 +14,7 @@ import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,10 +49,10 @@ public class C2_05_CustomAppearance {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signer.setSignerProperties(new SignerProperties().setFieldName(name));
 
         // Create the signature appearance
-        signer
+        signer.getSignerProperties()
                 .setReason(reason)
                 .setLocation(location);
 

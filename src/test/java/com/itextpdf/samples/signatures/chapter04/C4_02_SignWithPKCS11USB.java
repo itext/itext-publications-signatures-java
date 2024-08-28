@@ -24,6 +24,7 @@ import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.TSAClientBouncyCastle;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -112,12 +113,13 @@ public class C4_02_SignWithPKCS11USB {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProps = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProps);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

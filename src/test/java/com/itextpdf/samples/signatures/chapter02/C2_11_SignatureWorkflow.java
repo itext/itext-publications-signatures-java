@@ -15,12 +15,14 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -116,8 +118,10 @@ public class C2_11_SignatureWorkflow {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
         // Set signer options
-        signer.setFieldName(name);
-        signer.setCertificationLevel(PdfSigner.CERTIFIED_FORM_FILLING);
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(name)
+                .setCertificationLevel(AccessPermissions.FORM_FIELDS_MODIFICATION);
+        signer.setSignerProperties(signerProperties);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -146,7 +150,7 @@ public class C2_11_SignatureWorkflow {
 
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
-        signer.setFieldName(name);
+        signer.setSignerProperties(new SignerProperties().setFieldName(name));
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -164,7 +168,7 @@ public class C2_11_SignatureWorkflow {
 
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
-        signer.setFieldName(name);
+        signer.setSignerProperties(new SignerProperties().setFieldName(name));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(signer.getDocument(), true);
         form.getField(fname).setValue(value);
@@ -187,7 +191,6 @@ public class C2_11_SignatureWorkflow {
         cell.setNextRenderer(new SignatureFieldCellRenderer(cell, name));
         return cell;
     }
-
 
     private static class TextFieldCellRenderer extends CellRenderer {
         public String name;

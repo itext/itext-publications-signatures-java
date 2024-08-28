@@ -14,12 +14,14 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -76,7 +78,7 @@ public class C2_10_SequentialSignatures {
         return cell;
     }
 
-    public void sign(String keystore, String provider, int level, String src, String name, String dest)
+    public void sign(String keystore, String provider, AccessPermissions level, String src, String name, String dest)
             throws GeneralSecurityException, IOException {
         KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
@@ -88,8 +90,10 @@ public class C2_10_SequentialSignatures {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
         // Set the signer options
-        signer.setFieldName(name);
-        signer.setCertificationLevel(level);
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(name)
+                .setCertificationLevel(level);
+        signer.setSignerProperties(signerProperties);
 
         IExternalSignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -112,37 +116,37 @@ public class C2_10_SequentialSignatures {
         /* Alice signs certification signature (allowing form filling),
          * then Bob and Carol sign approval signature (not certified).
          */
-        app.sign(ALICE, provider.getName(), PdfSigner.CERTIFIED_FORM_FILLING, FORM, "sig1", DEST + RESULT_FILES[0]);
-        app.sign(BOB, provider.getName(), PdfSigner.NOT_CERTIFIED, DEST + RESULT_FILES[0], "sig2",
+        app.sign(ALICE, provider.getName(), AccessPermissions.FORM_FIELDS_MODIFICATION, FORM, "sig1", DEST + RESULT_FILES[0]);
+        app.sign(BOB, provider.getName(), AccessPermissions.UNSPECIFIED, DEST + RESULT_FILES[0], "sig2",
                 DEST + RESULT_FILES[1]);
-        app.sign(CAROL, provider.getName(), PdfSigner.NOT_CERTIFIED, DEST + RESULT_FILES[1], "sig3",
+        app.sign(CAROL, provider.getName(), AccessPermissions.UNSPECIFIED, DEST + RESULT_FILES[1], "sig3",
                 DEST + RESULT_FILES[2]);
 
         /* Alice signs approval signatures (not certified), so does Bob
          * and then Carol signs certification signature allowing form filling.
          */
-        app.sign(ALICE, provider.getName(), PdfSigner.NOT_CERTIFIED, FORM, "sig1", DEST + RESULT_FILES[3]);
-        app.sign(BOB, provider.getName(), PdfSigner.NOT_CERTIFIED, DEST + RESULT_FILES[3], "sig2",
+        app.sign(ALICE, provider.getName(), AccessPermissions.UNSPECIFIED, FORM, "sig1", DEST + RESULT_FILES[3]);
+        app.sign(BOB, provider.getName(), AccessPermissions.UNSPECIFIED, DEST + RESULT_FILES[3], "sig2",
                 DEST + RESULT_FILES[4]);
-        app.sign(CAROL, provider.getName(), PdfSigner.CERTIFIED_FORM_FILLING, DEST + RESULT_FILES[4], "sig3",
+        app.sign(CAROL, provider.getName(), AccessPermissions.FORM_FIELDS_MODIFICATION, DEST + RESULT_FILES[4], "sig3",
                 DEST + RESULT_FILES[5]);
 
         /* Alice signs approval signatures (not certified), so does Bob
          * and then Carol signs certification signature forbidding any changes to the document.
          */
-        app.sign(ALICE, provider.getName(), PdfSigner.NOT_CERTIFIED, FORM, "sig1", DEST + RESULT_FILES[6]);
-        app.sign(BOB, provider.getName(), PdfSigner.NOT_CERTIFIED, DEST + RESULT_FILES[6], "sig2",
+        app.sign(ALICE, provider.getName(), AccessPermissions.UNSPECIFIED, FORM, "sig1", DEST + RESULT_FILES[6]);
+        app.sign(BOB, provider.getName(), AccessPermissions.UNSPECIFIED, DEST + RESULT_FILES[6], "sig2",
                 DEST + RESULT_FILES[7]);
-        app.sign(CAROL, provider.getName(), PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED, DEST + RESULT_FILES[7], "sig3",
+        app.sign(CAROL, provider.getName(), AccessPermissions.NO_CHANGES_PERMITTED, DEST + RESULT_FILES[7], "sig3",
                 DEST + RESULT_FILES[8]);
 
         /* Alice signs certification signature (allowing form filling), then Bob signs approval
          * signatures (not certified) and then Carol signs certification signature allowing form filling.
          */
-        app.sign(ALICE, provider.getName(), PdfSigner.CERTIFIED_FORM_FILLING, FORM, "sig1", DEST + RESULT_FILES[9]);
-        app.sign(BOB, provider.getName(), PdfSigner.NOT_CERTIFIED, DEST + RESULT_FILES[9], "sig2",
+        app.sign(ALICE, provider.getName(), AccessPermissions.FORM_FIELDS_MODIFICATION, FORM, "sig1", DEST + RESULT_FILES[9]);
+        app.sign(BOB, provider.getName(), AccessPermissions.UNSPECIFIED, DEST + RESULT_FILES[9], "sig2",
                 DEST + RESULT_FILES[10]);
-        app.sign(CAROL, provider.getName(), PdfSigner.CERTIFIED_FORM_FILLING, DEST + RESULT_FILES[10], "sig3",
+        app.sign(CAROL, provider.getName(), AccessPermissions.FORM_FIELDS_MODIFICATION, DEST + RESULT_FILES[10], "sig3",
                 DEST + RESULT_FILES[11]);
     }
 
