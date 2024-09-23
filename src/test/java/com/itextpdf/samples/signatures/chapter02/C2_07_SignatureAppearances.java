@@ -57,7 +57,7 @@ public class C2_07_SignatureAppearances {
         signerProps.setFieldName(name);
 
         // Only description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("Signed by iText");
         signerProps.setSignatureAppearance(appearance);
         signer.setSignerProperties(signerProps);
@@ -84,7 +84,7 @@ public class C2_07_SignatureAppearances {
         signerProps.setFieldName(name);
 
         // Name and description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("", "Signed by iText");
         signerProps.setSignatureAppearance(appearance);
         signer.setSignerProperties(signerProps);
@@ -112,7 +112,7 @@ public class C2_07_SignatureAppearances {
         signerProps.setFieldName(name);
 
         // Graphic and description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1");
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("Signed by iText", image);
         signerProps.setSignatureAppearance(appearance);
         signer.setSignerProperties(signerProps);
@@ -140,7 +140,7 @@ public class C2_07_SignatureAppearances {
         signerProps.setFieldName(name);
 
         // Graphic is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent(image);
         signerProps.setSignatureAppearance(appearance);
         signer.setSignerProperties(signerProps);

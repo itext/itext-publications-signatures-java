@@ -71,7 +71,7 @@ public class C2_06_SignatureAppearance {
         signerProps.setFieldName(name);
 
         // Set the custom text and a custom font
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("This document was signed by Bruno Specimen");
         appearance.setFont(PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN));
         signerProps.setSignatureAppearance(appearance);
@@ -102,7 +102,7 @@ public class C2_06_SignatureAppearance {
         text.setFont(PdfFontFactory.createFont("./src/test/resources/font/NotoNaskhArabic-Regular.ttf",
                 PdfEncodings.IDENTITY_H, EmbeddingStrategy.PREFER_EMBEDDED));
         text.setBaseDirection(BaseDirection.RIGHT_TO_LEFT);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent(new Div().add(new Paragraph(text).setTextAlignment(TextAlignment.RIGHT)));
         signerProps.setSignatureAppearance(appearance);
         signer.setSignerProperties(signerProps);
@@ -125,7 +125,7 @@ public class C2_06_SignatureAppearance {
 
         // Set a custom text and a background image
         ImageData imageData = ImageDataFactory.create(IMG);
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("This document was signed by Bruno Specimen");
         BackgroundSize size = new BackgroundSize();
         size.setBackgroundSizeToValues(UnitValue.createPointValue(imageData.getWidth()),
@@ -158,7 +158,7 @@ public class C2_06_SignatureAppearance {
                 .setFieldName(name);
 
         // Set a custom text and a scaled background image
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(name);
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("This document was signed by Bruno Specimen");
         BackgroundSize backgroundSize = new BackgroundSize();
         backgroundSize.setBackgroundSizeToContain();
