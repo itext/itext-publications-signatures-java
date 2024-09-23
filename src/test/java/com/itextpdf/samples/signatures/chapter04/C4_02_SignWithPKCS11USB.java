@@ -1,34 +1,27 @@
 package com.itextpdf.samples.signatures.chapter04;
 
-import java.io.FileOutputStream;
-import java.util.Collection;
-import sun.security.pkcs11.SunPKCS11;
-import sun.security.pkcs11.wrapper.CK_C_INITIALIZE_ARGS;
-import sun.security.pkcs11.wrapper.CK_TOKEN_INFO;
-import sun.security.pkcs11.wrapper.PKCS11;
-import sun.security.pkcs11.wrapper.PKCS11Exception;
-
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.CertificateUtil;
-import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.CrlClientOnline;
-import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IOcspClient;
+import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.TSAClientBouncyCastle;
 import com.itextpdf.signatures.SignerProperties;
+import com.itextpdf.signatures.TSAClientBouncyCastle;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -38,10 +31,15 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import sun.security.pkcs11.SunPKCS11;
+import sun.security.pkcs11.wrapper.CK_C_INITIALIZE_ARGS;
+import sun.security.pkcs11.wrapper.CK_TOKEN_INFO;
+import sun.security.pkcs11.wrapper.PKCS11;
+import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 public class C4_02_SignWithPKCS11USB {
     public static final String DEST = "./target/signatures/chapter04/";

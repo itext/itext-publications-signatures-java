@@ -1,17 +1,15 @@
 package com.itextpdf.samples.signatures.chapter02;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.IExternalSignature;
-import com.itextpdf.signatures.IExternalDigest;
-import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.IExternalDigest;
+import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.PrivateKeySignature;
 import com.itextpdf.signatures.SignerProperties;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +20,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_02_SignHelloWorldWithTempFile {
     public static final String DEST = "./target/signatures/chapter02/";

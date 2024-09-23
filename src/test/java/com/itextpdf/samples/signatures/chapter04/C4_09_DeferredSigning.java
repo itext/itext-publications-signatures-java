@@ -1,13 +1,12 @@
 package com.itextpdf.samples.signatures.chapter04;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ExternalBlankSignatureContainer;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfPKCS7;
@@ -25,7 +24,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C4_09_DeferredSigning {

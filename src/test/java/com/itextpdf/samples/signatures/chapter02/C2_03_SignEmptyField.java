@@ -1,9 +1,9 @@
 package com.itextpdf.samples.signatures.chapter02;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
@@ -19,7 +19,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_03_SignEmptyField {

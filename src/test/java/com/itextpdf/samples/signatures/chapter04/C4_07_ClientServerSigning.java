@@ -1,11 +1,11 @@
 package com.itextpdf.samples.signatures.chapter04;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.ISignatureMechanismParams;

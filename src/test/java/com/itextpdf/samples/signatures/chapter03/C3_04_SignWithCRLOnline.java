@@ -1,12 +1,12 @@
 package com.itextpdf.samples.signatures.chapter03;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.CrlClientOnline;
-import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IOcspClient;
@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C3_04_SignWithCRLOnline {
