@@ -33,7 +33,7 @@ public class SignatureWorkflowTest extends WrappedSamplesRunner {
     static {
         ignoredAreaMap = new HashMap<>();
         ignoredAreaMap.put(1, new ArrayList<Rectangle>(Arrays.asList(
-                new Rectangle(55, 440, 287, 365))));
+                new Rectangle(55, 340, 287, 465))));
     }
 
     public static Collection<Object[]> data() {
