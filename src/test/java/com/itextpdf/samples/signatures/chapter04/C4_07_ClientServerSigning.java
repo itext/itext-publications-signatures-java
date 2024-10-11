@@ -1,10 +1,16 @@
 package com.itextpdf.samples.signatures.chapter04;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-import com.itextpdf.signatures.*;
+import com.itextpdf.signatures.BouncyCastleDigest;
+import com.itextpdf.signatures.IExternalDigest;
+import com.itextpdf.signatures.IExternalSignature;
+import com.itextpdf.signatures.ISignatureMechanismParams;
+import com.itextpdf.signatures.PdfSigner;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,12 +56,13 @@ public class C4_07_ClientServerSigning {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProperties = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProperties);
 
         IExternalDigest digest = new BouncyCastleDigest();
         IExternalSignature signature = new ServerSignature();

@@ -5,6 +5,7 @@ import com.itextpdf.forms.PdfSigFieldLock;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.forms.fields.TextFormFieldBuilder;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
@@ -17,13 +18,12 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,18 +34,18 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_12_LockFields {
     public static final String DEST = "./target/signatures/chapter02/";
     public static final String FORM = "./target/signatures/chapter02/form_lock.pdf";
 
-    public static final String ALICE = "./src/test/resources/encryption/alice";
-    public static final String BOB = "./src/test/resources/encryption/bob";
-    public static final String CAROL = "./src/test/resources/encryption/carol";
-    public static final String DAVE = "./src/test/resources/encryption/dave";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String ALICE = "./src/test/resources/encryption/alice.p12";
+    public static final String BOB = "./src/test/resources/encryption/bob.p12";
+    public static final String CAROL = "./src/test/resources/encryption/carol.p12";
+    public static final String DAVE = "./src/test/resources/encryption/dave.p12";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "step_1_signed_by_alice.pdf", "step_2_signed_by_alice_and_bob.pdf",
@@ -106,7 +106,7 @@ public class C2_12_LockFields {
 
     public void certify(String keystore, String provider, String src, String name, String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -116,8 +116,10 @@ public class C2_12_LockFields {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
         // Set signer options
-        signer.setFieldName(name);
-        signer.setCertificationLevel(PdfSigner.CERTIFIED_FORM_FILLING);
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName(name)
+                .setCertificationLevel(AccessPermissions.FORM_FIELDS_MODIFICATION);
+        signer.setSignerProperties(signerProperties);
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(signer.getDocument(), true);
         form.getField(name).setReadOnly(true);
@@ -133,7 +135,7 @@ public class C2_12_LockFields {
     public void fillOutAndSign(String keystore, String provider, String src, String name, String fname, String value,
             String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -141,12 +143,10 @@ public class C2_12_LockFields {
 
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
-        signer.setFieldName(name);
+        signer.setSignerProperties(new SignerProperties().setFieldName(name));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(signer.getDocument(), true);
         form.getField(fname).setValue(value);
-        form.getField(name).setReadOnly(true);
-        form.getField(fname).setReadOnly(true);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -166,7 +166,7 @@ public class C2_12_LockFields {
 
     public void sign(String keystore, String provider, String src, String name, String dest)
             throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider);
         ks.load(new FileInputStream(keystore), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -174,7 +174,7 @@ public class C2_12_LockFields {
 
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
-        signer.setFieldName(name);
+        signer.setSignerProperties(new SignerProperties().setFieldName(name));
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, DigestAlgorithms.SHA256, provider);
         IExternalDigest digest = new BouncyCastleDigest();

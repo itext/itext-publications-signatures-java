@@ -1,15 +1,16 @@
 package com.itextpdf.samples.signatures.chapter02;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,15 +21,14 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_08_SignatureMetadata {
     public static final String DEST = "./target/signatures/chapter02/";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
     public static final String SRC = "./src/test/resources/pdfs/hello_to_sign.pdf";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "field_metadata.pdf"
@@ -42,13 +42,15 @@ public class C2_08_SignatureMetadata {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location)
             .setContact(contact);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
+
+        signer.setSignerProperties(signerProps);
 
         // Set the signature event to allow modification of the signature dictionary.
         signer.setSignatureEvent(
@@ -73,7 +75,7 @@ public class C2_08_SignatureMetadata {
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);

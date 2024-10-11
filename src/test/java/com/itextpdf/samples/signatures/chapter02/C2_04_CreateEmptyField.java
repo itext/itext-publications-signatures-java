@@ -5,14 +5,15 @@ import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.PdfSignatureFormField;
 import com.itextpdf.forms.fields.SignatureFormFieldBuilder;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfArray;
-import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -22,12 +23,11 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,14 +38,15 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_04_CreateEmptyField {
     public static final String DEST = "./target/signatures/chapter02/";
 
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
     public static final String SIGNAME = "Signature1";
 
     public static final String[] RESULT_FILES = new String[]{
@@ -121,10 +122,11 @@ public class C2_04_CreateEmptyField {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        signer.setReason(reason);
-        signer.setLocation(location);
-
-        signer.setFieldName(name);
+        SignerProperties signerProperties = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location)
+                .setFieldName(name);
+        signer.setSignerProperties(signerProperties);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -143,7 +145,7 @@ public class C2_04_CreateEmptyField {
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);

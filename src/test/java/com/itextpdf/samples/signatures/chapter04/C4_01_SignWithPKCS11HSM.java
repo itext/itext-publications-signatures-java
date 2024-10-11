@@ -1,22 +1,21 @@
 package com.itextpdf.samples.signatures.chapter04;
 
-import sun.security.pkcs11.SunPKCS11;
-
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.CertificateUtil;
-import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.CrlClientOnline;
-import com.itextpdf.signatures.DigestAlgorithms;
+import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IOcspClient;
+import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
-import com.itextpdf.signatures.ITSAClient;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TSAClientBouncyCastle;
 
 import java.io.File;
@@ -34,8 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import sun.security.pkcs11.SunPKCS11;
 
 public class C4_01_SignWithPKCS11HSM {
     public static final String DEST = "./target/signatures/chapter04/";
@@ -60,7 +59,8 @@ public class C4_01_SignWithPKCS11HSM {
         BouncyCastleProvider providerBC = new BouncyCastleProvider();
         Security.addProvider(providerBC);
         FileInputStream fis = new FileInputStream(pkcs11cfg);
-        Provider providerPKCS11 = new SunPKCS11(fis);
+        Provider providerPKCS11 = new SunPKCS11();
+        providerPKCS11.load(fis);
         Security.addProvider(providerPKCS11);
 
         KeyStore ks = KeyStore.getInstance("PKCS11");
@@ -68,7 +68,7 @@ public class C4_01_SignWithPKCS11HSM {
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, pass);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
         ITSAClient tsaClient = null;
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];
@@ -95,14 +95,14 @@ public class C4_01_SignWithPKCS11HSM {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
-        // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProps = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProps);
 
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();

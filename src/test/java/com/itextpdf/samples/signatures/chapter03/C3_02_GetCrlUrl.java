@@ -32,7 +32,7 @@ public class C3_02_GetCrlUrl {
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];
             System.out.println(String.format("[%s] %s", i, cert.getSubjectDN()));
-            System.out.println(CertificateUtil.getCRLURL(cert));
+            System.out.println(CertificateUtil.getCRLURLs(cert));
         }
     }
 }

@@ -1,22 +1,24 @@
 package com.itextpdf.samples.signatures.chapter02;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,15 +29,14 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_09_SignatureTypes {
     public static final String DEST = "./target/signatures/chapter02/";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "hello_level_1.pdf", "hello_level_2.pdf",
@@ -48,26 +49,27 @@ public class C2_09_SignatureTypes {
     };
 
     public void sign(String src, String dest, Certificate[] chain, PrivateKey pk, String digestAlgorithm,
-            String provider, PdfSigner.CryptoStandard subfilter, int certificationLevel,
+            String provider, PdfSigner.CryptoStandard subfilter, AccessPermissions certificationLevel,
             String reason, String location)
             throws GeneralSecurityException, IOException {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProperties = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer.setPageRect(rect)
+        signerProperties.setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
 
-        /* Set the document's certification level. This parameter defines if changes are allowed
-         * after the applying of the signature.
-         */
-        signer.setCertificationLevel(certificationLevel);
+        // Set the document's certification level. This parameter defines if changes are allowed
+        // after the applying of the signature.
+        signerProperties.setCertificationLevel(certificationLevel);
+
+        signer.setSignerProperties(signerProperties);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -121,13 +123,14 @@ public class C2_09_SignatureTypes {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties().useAppendMode());
 
-        signer.setFieldName("Signature2");
-        signer
-            .setReason(reason)
-            .setLocation(location);
         Rectangle rect = new Rectangle(36, 700, 200, 100);
-        signer.setPageRect(rect)
-            .setPageNumber(1);
+        SignerProperties signerProperties = new SignerProperties()
+                .setFieldName("Signature2")
+                .setReason(reason)
+                .setLocation(location)
+                .setPageRect(rect)
+                .setPageNumber(1);
+        signer.setSignerProperties(signerProperties);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -141,7 +144,7 @@ public class C2_09_SignatureTypes {
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);
@@ -149,16 +152,16 @@ public class C2_09_SignatureTypes {
 
         C2_09_SignatureTypes app = new C2_09_SignatureTypes();
         app.sign(SRC, DEST + RESULT_FILES[0], chain, pk, DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CMS, PdfSigner.NOT_CERTIFIED,
+                PdfSigner.CryptoStandard.CMS, AccessPermissions.UNSPECIFIED,
                 "Test 1", "Ghent");
         app.sign(SRC, DEST + RESULT_FILES[1], chain, pk, DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CMS, PdfSigner.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS,
+                PdfSigner.CryptoStandard.CMS, AccessPermissions.ANNOTATION_MODIFICATION,
                 "Test 1", "Ghent");
         app.sign(SRC, DEST + RESULT_FILES[2], chain, pk, DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CMS, PdfSigner.CERTIFIED_FORM_FILLING,
+                PdfSigner.CryptoStandard.CMS, AccessPermissions.FORM_FIELDS_MODIFICATION,
                 "Test 1", "Ghent");
         app.sign(SRC, DEST + RESULT_FILES[3], chain, pk, DigestAlgorithms.SHA256, provider.getName(),
-                PdfSigner.CryptoStandard.CMS, PdfSigner.CERTIFIED_NO_CHANGES_ALLOWED,
+                PdfSigner.CryptoStandard.CMS, AccessPermissions.NO_CHANGES_PERMITTED,
                 "Test 1", "Ghent");
 
         app.addAnnotation(DEST + RESULT_FILES[0], DEST + RESULT_FILES[4]);

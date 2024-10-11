@@ -1,5 +1,7 @@
 package com.itextpdf.samples.signatures.chapter04;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,17 +11,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-import java.security.Signature;
+import java.security.*;
 
 import java.util.List;
 
 public class C4_08_ServerClientSigning {
     public static final String DEST = "./target/signatures/chapter04/";
 
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
     public static final String CERT = "./src/test/resources/encryption/bruno.crt";
     public static final String PRE = "http://demo.itextsupport.com/SigningApp/presign";
     public static final String POST = "http://demo.itextsupport.com/SigningApp/postsign";
@@ -28,7 +27,7 @@ public class C4_08_ServerClientSigning {
             "hello_server2.pdf"
     };
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static void main(String[] args) throws IOException, GeneralSecurityException {
         File file = new File(DEST);
@@ -68,8 +67,10 @@ public class C4_08_ServerClientSigning {
         is.close();
         byte[] hash = baos.toByteArray();
 
+        BouncyCastleProvider provider = new BouncyCastleProvider();
+        Security.addProvider(provider);
         // Load your private key from the key store
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);

@@ -3,13 +3,14 @@ package com.itextpdf.samples.signatures.chapter02;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,19 +21,16 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-import java.text.SimpleDateFormat;
-
-import java.util.Locale;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C2_07_SignatureAppearances {
     public static final String DEST = "./target/signatures/chapter02/";
 
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
     public static final String SRC = "./src/test/resources/pdfs/hello_to_sign.pdf";
     public static final String IMG = "./src/test/resources/img/1t3xt.gif";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "signature_appearance_1.pdf",
@@ -48,17 +46,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Only description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        // Only description is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("Signed by iText");
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -74,17 +73,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Name and description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance(signer.getFieldName());
+        // Name and description is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("", "Signed by iText");
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -101,17 +101,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Graphic and description is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1");
+        // Graphic and description is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent("Signed by iText", image);
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -128,17 +129,18 @@ public class C2_07_SignatureAppearances {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
+        SignerProperties signerProps = new SignerProperties()
             .setReason(reason)
             .setLocation(location);
 
         // This name corresponds to the name of the field that already exists in the document.
-        signer.setFieldName(name);
+        signerProps.setFieldName(name);
 
-        //Graphic is rendered
-        SignatureFieldAppearance appearance = new SignatureFieldAppearance("Signature1");
+        // Graphic is rendered
+        SignatureFieldAppearance appearance = new SignatureFieldAppearance(SignerProperties.IGNORED_ID);
         appearance.setContent(image);
-        signer.setSignatureAppearance(appearance);
+        signerProps.setSignatureAppearance(appearance);
+        signer.setSignerProperties(signerProps);
 
         PrivateKeySignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
         IExternalDigest digest = new BouncyCastleDigest();
@@ -153,7 +155,7 @@ public class C2_07_SignatureAppearances {
 
         BouncyCastleProvider provider = new BouncyCastleProvider();
         Security.addProvider(provider);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", provider.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, PASSWORD);

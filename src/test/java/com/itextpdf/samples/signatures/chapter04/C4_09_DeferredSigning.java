@@ -1,18 +1,18 @@
 package com.itextpdf.samples.signatures.chapter04;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
-
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ExternalBlankSignatureContainer;
 import com.itextpdf.signatures.IExternalSignatureContainer;
 import com.itextpdf.signatures.PdfPKCS7;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +24,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C4_09_DeferredSigning {
@@ -32,9 +31,9 @@ public class C4_09_DeferredSigning {
 
     public static final String SRC = "./src/test/resources/pdfs/hello.pdf";
     public static final String TEMP = "./target/signatures/chapter04/hello_empty_sig.pdf";
-    public static final String KEYSTORE = "./src/test/resources/encryption/ks";
+    public static final String KEYSTORE = "./src/test/resources/encryption/certificate.p12";
 
-    public static final char[] PASSWORD = "password".toCharArray();
+    public static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     public static final String[] RESULT_FILES = new String[] {
             "hello_sig_ok.pdf"
@@ -47,7 +46,7 @@ public class C4_09_DeferredSigning {
         BouncyCastleProvider providerBC = new BouncyCastleProvider();
         Security.addProvider(providerBC);
 
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore ks = KeyStore.getInstance("pkcs12", providerBC.getName());
         ks.load(new FileInputStream(KEYSTORE), PASSWORD);
         String alias = ks.aliases().nextElement();
         Certificate[] chain = ks.getCertificateChain(alias);
@@ -62,10 +61,11 @@ public class C4_09_DeferredSigning {
             throws IOException, GeneralSecurityException {
         PdfReader reader = new PdfReader(src);
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
-        signer
+        SignerProperties signerProperties = new SignerProperties()
                 .setPageRect(new Rectangle(36, 748, 200, 100))
                 .setPageNumber(1)
                 .setFieldName(fieldname);
+        signer.setSignerProperties(signerProperties);
 
         /* ExternalBlankSignatureContainer constructor will create the PdfDictionary for the signature
          * information and will insert the /Filter and /SubFilter values into this dictionary.

@@ -1,18 +1,12 @@
 package com.itextpdf.samples.signatures.chapter03;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
 import com.itextpdf.signatures.CertificateUtil;
 import com.itextpdf.signatures.CrlClientOnline;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
@@ -21,8 +15,11 @@ import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TSAClientBouncyCastle;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
@@ -30,7 +27,9 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C3_11_SignWithToken {
@@ -67,7 +66,7 @@ public class C3_11_SignWithToken {
         String alias = "Bruno Lowagie";
         PrivateKey pk = (PrivateKey) ks.getKey(alias, null);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
         ITSAClient tsaClient = null;
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = (X509Certificate) chain[i];
@@ -98,12 +97,13 @@ public class C3_11_SignWithToken {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProperties = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProperties);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);

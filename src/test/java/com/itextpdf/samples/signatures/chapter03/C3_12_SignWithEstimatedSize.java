@@ -1,33 +1,33 @@
 package com.itextpdf.samples.signatures.chapter03;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
 import com.itextpdf.signatures.IOcspClient;
+import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.PdfSigner;
-import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 import com.itextpdf.signatures.TSAClientBouncyCastle;
-
-import java.io.FileOutputStream;
-import java.util.Collection;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.util.Collection;
 import java.util.Properties;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C3_12_SignWithEstimatedSize {
     public static final String DEST = "./target/test/resources/signatures/chapter03/";
@@ -59,7 +59,7 @@ public class C3_12_SignWithEstimatedSize {
         String alias = ks.aliases().nextElement();
         PrivateKey pk = (PrivateKey) ks.getKey(alias, pass);
         Certificate[] chain = ks.getCertificateChain(alias);
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
         ITSAClient tsaClient = new TSAClientBouncyCastle(tsaUrl, tsaUser, tsaPass);
         C3_12_SignWithEstimatedSize app = new C3_12_SignWithEstimatedSize();
 
@@ -92,12 +92,13 @@ public class C3_12_SignWithEstimatedSize {
 
         // Create the signature appearance
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProperties = new SignerProperties()
                 .setReason(reason)
                 .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProperties);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);

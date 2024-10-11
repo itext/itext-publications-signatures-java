@@ -1,10 +1,10 @@
 package com.itextpdf.samples.signatures.chapter03;
 
+import com.itextpdf.kernel.crypto.DigestAlgorithms;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.signatures.BouncyCastleDigest;
-import com.itextpdf.signatures.DigestAlgorithms;
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IExternalDigest;
 import com.itextpdf.signatures.IExternalSignature;
@@ -13,6 +13,7 @@ import com.itextpdf.signatures.ITSAClient;
 import com.itextpdf.signatures.OcspClientBouncyCastle;
 import com.itextpdf.signatures.PdfSigner;
 import com.itextpdf.signatures.PrivateKeySignature;
+import com.itextpdf.signatures.SignerProperties;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +26,6 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Properties;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class C3_07_SignWithOCSP {
@@ -60,7 +60,7 @@ public class C3_07_SignWithOCSP {
          * In the current sample it is not needed to verify the OCSP response,
          * that is why null is passed as verifier parameter.
          */
-        IOcspClient ocspClient = new OcspClientBouncyCastle(null);
+        IOcspClient ocspClient = new OcspClientBouncyCastle();
 
         new C3_07_SignWithOCSP().sign(SRC, DEST + RESULT_FILES[0], chain, pk,
                 DigestAlgorithms.SHA256, provider.getName(),
@@ -77,15 +77,14 @@ public class C3_07_SignWithOCSP {
         PdfSigner signer = new PdfSigner(reader, new FileOutputStream(dest), new StampingProperties());
 
         // Create the signature appearance
-        signer
-                .setReason(reason)
-                .setLocation(location);
-
         Rectangle rect = new Rectangle(36, 648, 200, 100);
-        signer
+        SignerProperties signerProperties = new SignerProperties()
+                .setReason(reason)
+                .setLocation(location)
                 .setPageRect(rect)
                 .setPageNumber(1)
                 .setFieldName("sig");
+        signer.setSignerProperties(signerProperties);
 
         // Creating the signature
         IExternalSignature pks = new PrivateKeySignature(pk, digestAlgorithm, provider);
