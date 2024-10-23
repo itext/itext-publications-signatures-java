@@ -13,6 +13,7 @@ import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.test.ITextTest;
+
 import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -34,7 +35,7 @@ import java.util.Map;
  * length, and as a result the strength, of encryption keys. Be aware that in
  * this sample by using {@link ITextTest#removeCryptographyRestrictions()} we
  * remove cryptography restrictions via reflection for testing purposes.
- * <br/>
+ * <br>
  * For more conventional way of solving this problem you need to replace the
  * default security JARs in your Java installation with the Java Cryptography
  * Extension (JCE) Unlimited Strength Jurisdiction Policy Files. These JARs
@@ -48,7 +49,8 @@ public class SignatureTestHelper {
 
     private String errorMessage;
 
-    public String checkForErrors(String outFile, String cmpFile, String destPath, Map<Integer, List<Rectangle>> ignoredAreas)
+    public String checkForErrors(String outFile, String cmpFile, String destPath,
+            Map<Integer, List<Rectangle>> ignoredAreas)
             throws InterruptedException, IOException, GeneralSecurityException {
         errorMessage = null;
 
@@ -72,12 +74,26 @@ public class SignatureTestHelper {
 
     /**
      * In this method we add trusted certificates to the IssuingCertificateRetriever.
-     * If document signatures certificates doesn't contain certificates that are added in this method, verification will fail.
+     * If document signatures certificates doesn't contain certificates that are added in this method, verification will
+     * fail.
      * NOTE: Override this method to add additional certificates.
+     *
+     * @param certificateRetriever certificate retriever
+     * @param certs                certificates
+     *
+     * @throws CertificateException cert retriever problem occurred
+     * @throws IOException          input/output file exception
      */
     protected void addTrustedCertificates(IssuingCertificateRetriever certificateRetriever, List<Certificate> certs)
             throws CertificateException, IOException {
         certificateRetriever.addTrustedCertificates(certs);
+    }
+
+    protected void compareSignatures(String outFile, String cmpFile) throws IOException {
+        SignedDocumentInfo outInfo = collectInfo(outFile);
+        SignedDocumentInfo cmpInfo = collectInfo(cmpFile);
+
+        compareSignedDocumentsInfo(outInfo, cmpInfo);
     }
 
     private void verifySignaturesForDocument(String documentPath) throws IOException, CertificateException {
@@ -112,13 +128,6 @@ public class SignatureTestHelper {
             }
         }
 
-    }
-
-    protected void compareSignatures(String outFile, String cmpFile) throws IOException {
-        SignedDocumentInfo outInfo = collectInfo(outFile);
-        SignedDocumentInfo cmpInfo = collectInfo(cmpFile);
-
-        compareSignedDocumentsInfo(outInfo, cmpInfo);
     }
 
     private SignedDocumentInfo collectInfo(String documentPath) throws IOException {
@@ -356,19 +365,23 @@ public class SignatureTestHelper {
                 CertificateInfo cmpCert = cmpSig.getCertificateInfos().get(j);
 
                 if (!outCert.getIssuer().equals(cmpCert.getIssuer())) {
-                    addComparisonError("Certificate issuer", outCert.getIssuer().toString(), cmpCert.getIssuer().toString());
+                    addComparisonError("Certificate issuer", outCert.getIssuer().toString(),
+                            cmpCert.getIssuer().toString());
                 }
 
                 if (!outCert.getSubject().equals(cmpCert.getSubject())) {
-                    addComparisonError("Certificate subject", outCert.getSubject().toString(), cmpCert.getSubject().toString());
+                    addComparisonError("Certificate subject", outCert.getSubject().toString(),
+                            cmpCert.getSubject().toString());
                 }
 
                 if (!outCert.getValidFrom().equals(cmpCert.getValidFrom())) {
-                    addComparisonError("Date \"valid from\"", outCert.getValidFrom().toString(), cmpCert.getValidFrom().toString());
+                    addComparisonError("Date \"valid from\"", outCert.getValidFrom().toString(),
+                            cmpCert.getValidFrom().toString());
                 }
 
                 if (!outCert.getValidTo().equals(cmpCert.getValidTo())) {
-                    addComparisonError("Date \"valid to\"", outCert.getValidTo().toString(), cmpCert.getValidTo().toString());
+                    addComparisonError("Date \"valid to\"", outCert.getValidTo().toString(),
+                            cmpCert.getValidTo().toString());
                 }
             }
 
@@ -391,10 +404,11 @@ public class SignatureTestHelper {
 
     private void addError(String error) {
         if (error != null && error.length() > 0) {
-            if (errorMessage == null)
+            if (errorMessage == null) {
                 errorMessage = "";
-            else
+            } else {
                 errorMessage += "\n";
+            }
 
             errorMessage += error;
         }
