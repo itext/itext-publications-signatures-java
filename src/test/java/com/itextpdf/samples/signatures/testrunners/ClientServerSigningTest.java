@@ -26,13 +26,6 @@ import java.util.concurrent.TimeUnit;
 public class ClientServerSigningTest extends WrappedSamplesRunner {
     private static final Map<Integer, List<Rectangle>> ignoredAreaMap;
 
-    private static final String EXPECTED_ERROR_TEXT = "\n./target/signatures/chapter04/hello_server.pdf:\n" +
-            "Document signatures validation failed!\n\n" +
-            "CertificateReportItem{baseclass=\n" +
-            "ReportItem{checkName='Required certificate extensions check.', message=" +
-            "'Required extension 2.5.29.15 is missing or incorrect.', cause=null, status=INVALID}\n" +
-            "certificate=CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown}\n";
-
     static {
         ignoredAreaMap = new HashMap<>();
         ignoredAreaMap.put(1, new ArrayList<Rectangle>(Arrays.asList(
@@ -84,14 +77,6 @@ public class ClientServerSigningTest extends WrappedSamplesRunner {
         }
 
         String errorText = errorTemp.toString();
-        if (!errorText.contains(EXPECTED_ERROR_TEXT)) {
-            errorText += "\n'hello_server.pdf' file's signature is expected to be invalid due to " +
-                    "missing key usage extension for signing certificate.\n\n";
-        } else {
-            // Expected error should be ignored
-            errorText = errorText.replace(EXPECTED_ERROR_TEXT, "");
-        }
-
         addError(errorText);
     }
 
