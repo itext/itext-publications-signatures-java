@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf.samples</groupId>
   <artifactId>signatures</artifactId>
-  <version>9.1.0-SNAPSHOT</version>
+  <version>9.1.0</version>
   <name>iText Publications: Signatures</name>
   <url>http://itextpdf.com/</url>
   <properties>
     <java.version>1.8</java.version>
-    <licensekey.version>4.2.1-SNAPSHOT</licensekey.version>
+    <licensekey.version>4.2.1</licensekey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <typography.version>5.0.1-SNAPSHOT</typography.version>
+    <typography.version>5.0.1</typography.version>
   </properties>
   <repositories>
     <repository>
