@@ -197,8 +197,8 @@ public class SignatureTestHelper {
             for (Certificate certificate : certs) {
                 X509Certificate cert = (X509Certificate) certificate;
                 CertificateInfo certInfo = new CertificateInfo();
-                certInfo.setIssuer(cert.getIssuerDN());
-                certInfo.setSubject(cert.getSubjectDN());
+                certInfo.setIssuer(cert.getIssuerX500Principal());
+                certInfo.setSubject(cert.getSubjectX500Principal());
                 certInfo.setValidFrom(cert.getNotBefore());
                 certInfo.setValidTo(cert.getNotAfter());
 
