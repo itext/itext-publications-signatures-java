@@ -50,13 +50,18 @@ public class SignatureTestHelper {
     private String errorMessage;
 
     public String checkForErrors(String outFile, String cmpFile, String destPath,
-            Map<Integer, List<Rectangle>> ignoredAreas)
+            Map<Integer, List<Rectangle>> ignoredAreas, boolean compareSecondCmp)
             throws InterruptedException, IOException, GeneralSecurityException {
         errorMessage = null;
 
         //compares documents visually
         CompareTool ct = new CompareTool();
         String comparisonResult = ct.compareVisually(outFile, cmpFile, destPath, "diff", ignoredAreas);
+        // Checking with the second CMP file, as environment and JDK differences may affect the output.
+        if (comparisonResult != null && compareSecondCmp) {
+            String secondCmpFile = cmpFile.replace(".pdf", "_2.pdf");
+            comparisonResult = ct.compareVisually(outFile, secondCmpFile, destPath, "diff", ignoredAreas);
+        }
         addError(comparisonResult);
 
         //verifies document signatures
@@ -70,6 +75,12 @@ public class SignatureTestHelper {
         }
 
         return errorMessage;
+    }
+
+    public String checkForErrors(String outFile, String cmpFile, String destPath,
+            Map<Integer, List<Rectangle>> ignoredAreas)
+            throws InterruptedException, IOException, GeneralSecurityException {
+        return checkForErrors(outFile, cmpFile, destPath, ignoredAreas, false);
     }
 
     /**

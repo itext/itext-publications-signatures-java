@@ -72,7 +72,7 @@ public class SignatureWorkflowTest extends WrappedSamplesRunner {
                         certificateRetriever.addTrustedCertificates(
                                 Arrays.asList(aliceCert, bobCert, carolCert, daveCert));
                     }
-                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap));
+                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap, true));
             } catch (InterruptedException | IOException | GeneralSecurityException exc) {
                 addError("Exception has been thrown: " + exc.getMessage());
             }

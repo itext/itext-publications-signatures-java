@@ -85,7 +85,7 @@ public class SequentialSignaturesTest extends WrappedSamplesRunner {
                         Certificate carolCert = cf.generateCertificate(new FileInputStream(CAROL));
                         certificateRetriever.addTrustedCertificates(Arrays.asList(aliceCert, bobCert, carolCert));
                     }
-                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap);
+                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap, true);
 
                 if (result != null) {
                     errorTemp.append(result);

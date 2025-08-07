@@ -94,7 +94,7 @@ public class LockFieldsTest extends WrappedSamplesRunner {
                         certificateRetriever.addTrustedCertificates(
                                 Arrays.asList(aliceCert, bobCert, carolCert, daveCert));
                     }
-                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap);
+                }.checkForErrors(currentDest, currentCmp, outPath, ignoredAreaMap, true);
 
                 if (result != null) {
                     errorTemp.append(result);
