@@ -26,28 +26,50 @@ public class C5_03_CertificateValidation {
     public static final String EXAMPLE = "./src/test/resources/pdfs/signedPAdES-LT.pdf";
 
     public static final String EXPECTED_OUTPUT = "./src/test/resources/pdfs/signedPAdES-LT.pdf\n"
-            + "ValidationReport{validationResult=INDETERMINATE\n" +
-            "reportItems=\n" +
-            "ReportItem{checkName='Signature verification check.', message='Validating signature Signature1', " +
-            "cause=null, status=INFO}, \n" +
-            "CertificateReportItem{baseclass=\n" +
-            "ReportItem{checkName='Revocation data check.', message='Certificate revocation status " +
-            "cannot be checked: no revocation data available or the status cannot be determined.', " +
-            "cause=null, status=INDETERMINATE}\n" +
-            "certificate=CN=iTextTestTsCert, OU=test, O=iText, L=Minsk, C=BY}, \n" +
-            "CertificateReportItem{baseclass=\n" +
-            "ReportItem{checkName='Certificate check.', message='Certificate CN=iTextTestRoot, OU=test, O=iText, " +
-            "L=Minsk, C=BY is trusted, revocation data checks are not required.', cause=null, status=INFO}\n" +
-            "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, \n" +
-            "CertificateReportItem{baseclass=\n" +
-            "ReportItem{checkName='Revocation data check.', message='Certificate revocation status " +
-            "cannot be checked: no revocation data available or the status cannot be determined.', " +
-            "cause=null, status=INDETERMINATE}\n" +
-            "certificate=CN=iTextTestRsaCert01, OU=test, O=iText, L=Minsk, C=BY}, \n" +
-            "CertificateReportItem{baseclass=\n" +
-            "ReportItem{checkName='Certificate check.', message='Certificate CN=iTextTestRoot, OU=test, O=iText, " +
-            "L=Minsk, C=BY is trusted, revocation data checks are not required.', cause=null, status=INFO}\n" +
-            "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, }";
+            + "ValidationReport{validationResult=INDETERMINATE\n"
+            + "reportItems=\n"
+            + "ReportItem{checkName='Signature verification check.', message='Validating signature Signature1', "
+            + "cause=null, status=INFO}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='CRL response check.', message='CRL response is not fresh enough: this update: "
+            + "2017-04-10 12:48, validation date: 2025-11-12 17:32, freshness: PT720H.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestTsCert, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='Revocation data check.', message='Certificate revocation status cannot be "
+            + "checked: no revocation data available or the status cannot be determined.', cause=null, "
+            + "status=INDETERMINATE}\n"
+            + "certificate=CN=iTextTestTsCert, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='Certificate check.', message='Certificate CN=iTextTestRoot, OU=test, O=iText, "
+            + "L=Minsk, C=BY is trusted, revocation data checks are not required.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='Certificate check.', message='Trusted Certificate is taken from manually "
+            + "configured Trust List.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='OCSP response check.', message='OCSP response is not fresh enough: this update: "
+            + "2017-04-10 12:48, validation date: 2025-11-12 17:32, freshness: PT720H.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestRsaCert01, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='CRL response check.', message='CRL response is not fresh enough: this update: "
+            + "2017-04-10 12:48, validation date: 2025-11-12 17:32, freshness: PT720H.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestRsaCert01, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='Revocation data check.', message='Certificate revocation status cannot be "
+            + "checked: no revocation data available or the status cannot be determined.', cause=null, "
+            + "status=INDETERMINATE}\n"
+            + "certificate=CN=iTextTestRsaCert01, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='Certificate check.', message='Certificate CN=iTextTestRoot, OU=test, O=iText, "
+            + "L=Minsk, C=BY is trusted, revocation data checks are not required.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, \n"
+            + "CertificateReportItem{baseclass=\n"
+            + "ReportItem{checkName='Certificate check.', message='Trusted Certificate is taken from manually "
+            + "configured Trust List.', cause=null, status=INFO}\n"
+            + "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, }";
+
+    public static final String STRING_TO_IGNORE = "2017-04-10 12:48";
 
     private static PrintStream OUT_STREAM = System.out;
 
