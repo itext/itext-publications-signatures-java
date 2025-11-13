@@ -8,10 +8,12 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@Tag("SampleTest")
 public class CertificateValidationTest extends WrappedSamplesRunner {
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 

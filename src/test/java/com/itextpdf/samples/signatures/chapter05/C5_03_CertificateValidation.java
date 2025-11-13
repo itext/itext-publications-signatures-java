@@ -69,7 +69,7 @@ public class C5_03_CertificateValidation {
             + "configured Trust List.', cause=null, status=INFO}\n"
             + "certificate=CN=iTextTestRoot, OU=test, O=iText, L=Minsk, C=BY}, }";
 
-    public static final String STRING_TO_IGNORE = "2017-04-10 12:48";
+    public static final String STRING_TO_IGNORE = "freshness: PT720H.";
 
     private static PrintStream OUT_STREAM = System.out;
 
