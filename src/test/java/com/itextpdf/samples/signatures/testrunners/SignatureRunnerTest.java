@@ -105,7 +105,7 @@ public class SignatureRunnerTest extends WrappedSamplesRunner {
     public void test(RunnerParams data) throws Exception {
         this.sampleClassParams = data;
         try (FileInputStream license = new FileInputStream(System.getenv("ITEXT_LICENSE_FILE_LOCAL_STORAGE")
-                + "/all-products.json")) {
+                + "/dev_all_products.json")) {
             LicenseKey.loadLicenseFile(license);
         }
         FontCache.clearSavedFonts();

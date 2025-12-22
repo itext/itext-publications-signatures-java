@@ -8,10 +8,12 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@Tag("SampleTest")
 public class CertificateValidationTest extends WrappedSamplesRunner {
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -42,9 +44,14 @@ public class CertificateValidationTest extends WrappedSamplesRunner {
         String[] outputLines = sysOut.split("\n");
 
         String[] expectedLines = getStringField(sampleClass, "EXPECTED_OUTPUT").split("\n");
+        String ignoreString = getStringField(sampleClass, "STRING_TO_IGNORE");
 
         for (int i = 0; i < outputLines.length; ++i) {
             String line = outputLines[i];
+            if (ignoreString != null && line.contains(ignoreString)) {
+                continue;
+            }
+
             if (!line.trim().equals(expectedLines[i].trim())) {
                 addError(String.format("Unexpected output at line %d.\nExpected: %s\ngot: %s",
                         i + 1, expectedLines[i], outputLines[i]));
