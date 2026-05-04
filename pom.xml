@@ -10,7 +10,6 @@
     <java.version>1.8</java.version>
     <licensekey.version>4.2.7-SNAPSHOT</licensekey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <typography.version>5.0.7-SNAPSHOT</typography.version>
   </properties>
   <repositories>
@@ -93,12 +92,10 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <!-- Disable surefire plugin to avoid double tests running -->
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M3</version>
         <configuration>
-          <groups>UnitTest,BouncyCastleUnitTest</groups>
-          <argLine>${env.SUREFIRE_OPTS}</argLine>
+          <skip>true</skip>
         </configuration>
       </plugin>
       <plugin>
@@ -119,28 +116,6 @@
           </includes>
           <groups>SampleTest</groups>
           <argLine>${env.SUREFIRE_OPTS}</argLine>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.ekryd.sortpom</groupId>
-        <artifactId>sortpom-maven-plugin</artifactId>
-        <version>2.9.0</version>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>sort</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <lineSeparator>\n</lineSeparator>
-          <encoding>${project.build.sourceEncoding}</encoding>
-          <sortProperties>true</sortProperties>
-          <keepBlankLines>true</keepBlankLines>
-          <expandEmptyElements>false</expandEmptyElements>
-          <nrOfIndentSpace>2</nrOfIndentSpace>
-          <sortDependencies>scope</sortDependencies>
         </configuration>
       </plugin>
       <plugin>
@@ -189,13 +164,4 @@
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
