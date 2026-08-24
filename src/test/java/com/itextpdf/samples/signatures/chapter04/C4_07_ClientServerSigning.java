@@ -75,10 +75,12 @@ public class C4_07_ClientServerSigning {
     public class ServerSignature implements IExternalSignature {
         public static final String SIGN = "http://demo.itextsupport.com/SigningApp/signbytes";
 
+        @Override
         public String getDigestAlgorithmName() {
             return DigestAlgorithms.SHA256;
         }
 
+        @Override
         public String getSignatureAlgorithmName() {
             return "RSA";
         }
@@ -88,6 +90,7 @@ public class C4_07_ClientServerSigning {
             return null;
         }
 
+        @Override
         public byte[] sign(byte[] message) throws GeneralSecurityException {
             try {
                 URL url = new URL(SIGN);
