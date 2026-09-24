@@ -68,6 +68,7 @@ public class C3_10_SignWithTSAEvent {
 
             // TimeStampTokenInfo object contains much more information about the timestamp token,
             // like serial number, TST hash algorithm, etc.
+            @Override
             public void inspectTimeStampTokenInfo(ITimeStampTokenInfo info) {
                 System.out.println(info.getGenTime());
             }

@@ -102,6 +102,7 @@ public class C4_09_DeferredSigning {
             this.chain = chain;
         }
 
+        @Override
         public byte[] sign(InputStream is) throws GeneralSecurityException {
             try {
                 PrivateKeySignature signature = new PrivateKeySignature(pk, "SHA256", "BC");
@@ -120,6 +121,7 @@ public class C4_09_DeferredSigning {
             }
         }
 
+        @Override
         public void modifySigningDictionary(PdfDictionary signDic) {
         }
     }
